@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<script>
+	$(document).ready(function(){
+
+		// активация по нажатию на группу
+		$("body").on('click', '.list-group-item', function(e){
+			e.preventDefault();
+			var clickedId = this.id.split('-');
+			if(clickedId[0] == 'group'){
+				$(".list-group-item").removeClass('active');
+				$(this).addClass('active')
+			}
+		})
+		//создание группы
+		$("body").on('click', '.btn-success', function(e){
+			e.preventDefault();
+			var clickedId = this.id.split('-')
+			if(clickedId[0] == 'create'){
+				var name = prompt("Название:", "");
+				if(name != null && name != ''){
+					$("#" + clickedId[1] + " .list-group").append('<a href="#" class="list-group-item" id="' + clickedId[1] + '-3">' + name +'<span class="badge delete" id="delete-' + clickedId[1] + '-3"> Удалить</span><span class="badge edit" id="edit-' + clickedId[1] + '-3"> Редактировать</span></a>');
+				}
+			}
+		})
+		// редактирование группы
+		$("body").on('click', '.edit', function(e){
+			e.preventDefault();
+			var clickedId = this.id.split("-");
+			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split(' ');
+			var replace_text = prompt("Измените текст", text_parts[0].trim()).trim();
+			if(replace_text != "" && replace_text != null){
+				$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<span class="badge delete" id="delete-' + clickedId[1] + '-' + clickedId[2]+'"> Удалить</span><span class="badge edit" id="edit-'+ clickedId[1] + '-' + clickedId[2] +'"> Редактировать</span>' );
+			}
+		})
+
+		// удаление группы
+		$("body").on('click', '.delete', function(e){
+			e.preventDefault();
+			var clickedId = this.id.split("-");
+			if(confirm("Вы точно хотите удалить ?")){
+				$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow');
+			}
+		})
+	})
+</script>
+		<div id="menu" class="row">
+			<h2>Меню</h2>
+			<div class="col-md-6">
+				<div class="catalog" id="group">
+					<h3>Группы</h3>
+					<a href="#" class="btn btn-block btn-success" id="create-group">Создать <span class="glyphicon glyphicon-plus"></span></a>
+					<div class="list-group">
+						<a href="#" class="list-group-item" id="group-1">Бургеры
+							<span class="badge delete" id="delete-group-1"> Удалить</span>
+							<span class="badge edit" id="edit-group-1"> Редактировать</span>
+						</a>
+						<a href="#" class="list-group-item" id="group-2">Салаты
+							<span class="badge delete" id="delete-group-2"> Удалить</span>
+							<span class="badge edit" id="edit-group-2"> Редактировать</span>
+						</a>
+						<a href="#" class="list-group-item" id="group-3">Напитки
+							<span class="badge delete" id="delete-group-3"> Удалить</span>
+							<span class="badge edit" id="edit-group-3"> Редактировать</span>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="catalog" id="dish">
+					<h3>Блюда</h3>
+					<a href="#" class="btn btn-block btn-success" id="create-dish">Создать <span class="glyphicon glyphicon-plus"></span></a>
+					<div class="list-group">
+						<a href="#" class="list-group-item" id="dish-1">Бургер американский
+							<span class="badge delete" id="delete-dish-1"> Удалить</span>
+							<span class="badge edit" id="edit-dish-1"> Редактировать</span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+{% endblock %}
