@@ -1,5 +1,5 @@
 manager:
-    image: alexputrya/test:latest
+    image: alexputrya/manager:latest
     command: python run.py
     ports:
       - '88:5000'

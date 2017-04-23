@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Войти</h1>
+<form action="" method="POST" name="login">
+    {{ form.hidden_tag() }}
+    <p>
+        Ввведите логин: <br>
+        {{ form.openid(size=20)}} <br>
+        {% for error in form.errors.openid %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}<br>
+    </p>
+    <p>{{ form.remember_me }}Запомнить меня</p>
+    <p><input type="submit" value="Войти"></p>
+</form>
+{% endblock %}
