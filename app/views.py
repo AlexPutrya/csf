@@ -10,3 +10,6 @@ def index():
 @app.route('/catalog')
 def catalog():
     return render_template('catalog.html')
+@app.route('test/')
+def test():
+    return "Hello"
