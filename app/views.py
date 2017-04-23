@@ -5,11 +5,11 @@ from app import app
 
 @app.route('/')
 def index():
-    return render_template('catalog.html')
+    return render_template('main.html')
 
 @app.route('/catalog')
 def catalog():
     return render_template('catalog.html')
-@app.route('test/')
+@app.route('/test')
 def test():
     return "Hello"
