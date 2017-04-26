@@ -8,9 +8,25 @@
 		$("body").on('click', '.list-group-item', function(e){
 			e.preventDefault();
 			var clickedId = this.id.split('-');
+			//проверяем чтоб нажатие было на группу
 			if(clickedId[0] == 'group'){
 				$(".list-group-item").removeClass('active');
 				$(this).addClass('active')
+				
+				var parametr = {
+					id: clickedId
+				};
+				//отправляем запрос id категории и получаем на страницу товары в категории
+				$.getJSON("/dishes", parametr)
+				.done(function(data, testStatus, jqXHR){
+					//удаляем все продукты из колнки
+					$("#dish .list-group-item").remove();
+					// перебираем элементы и добавляем на страницу
+					$.each(data.products, function(key, value) {
+						$("#dish .list-group").append('<a href="#" class="list-group-item" id="dish-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span><div class="btn-group pull-right"><button type="button"  id="edit-dish-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-dish-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>'
+						);
+					});	
+				});
 			}
 		})
 		//создание группы
@@ -52,24 +68,14 @@
 					<h3>Группы</h3>
 					<a href="#" class="btn btn-block btn-success" id="create-group">Создать <span class="glyphicon glyphicon-plus"></span></a>
 					<div class="list-group">
-						<a href="#" class="list-group-item" id="group-1">Бургеры
+						{% for group in groups %}
+						<a href="#" class="list-group-item" id="group-{{group['id']}}">{{group['name']}}
 							<div class="btn-group pull-right">
-								<button type="button"  id="edit-group-1" class="btn-xs btn-info edit">Редактировать</button>
-								<button type="button" id="delete-group-1" class="btn-xs btn-danger delete">Удалить</button>
+								<button type="button"  id="edit-group-{{group['id']}}" class="btn-xs btn-info edit">Редактировать</button>
+								<button type="button" id="delete-group-{{group['id']}}" class="btn-xs btn-danger delete">Удалить</button>
 							</div>
 						</a>
-						<a href="#" class="list-group-item" id="group-2">Салаты
-							<div class="btn-group pull-right">
-								<button type="button"  id="edit-group-2" class="btn-xs btn-info edit">Редактировать</button>
-								<button type="button" id="delete-group-2" class="btn-xs btn-danger delete">Удалить</button>
-							</div>
-						</a>
-						<a href="#" class="list-group-item" id="group-3">Напитки
-							<div class="btn-group pull-right">
-								<button type="button"  id="edit-group-3" class="btn-xs btn-info edit">Редактировать</button>
-								<button type="button" id="delete-group-3" class="btn-xs btn-danger delete">Удалить</button>
-							</div>
-						</a>
+						{% endfor %}
 					</div>
 				</div>
 			</div>
@@ -83,13 +89,6 @@
 							<div class="btn-group pull-right">
 								<button type="button"  id="edit-dish-1" class="btn-xs btn-info edit">Редактировать</button>
 								<button type="button" id="delete-dish-1" class="btn-xs btn-danger delete">Удалить</button>
-							</div>
-						</a>
-						<a href="#" class="list-group-item" id="dish-2">Бургер европейский
-							<span class=" price"> | 80грн</span>
-							<div class="btn-group pull-right">
-								<button type="button"  id="edit-dish-2" class="btn-xs btn-info edit">Редактировать</button>
-								<button type="button" id="delete-dish-2" class="btn-xs btn-danger delete">Удалить</button>
 							</div>
 						</a>
 					</div>
