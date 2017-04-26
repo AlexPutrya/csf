@@ -1,6 +1,5 @@
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request
 from app import app
-from .forms import LoginForm
 
 
 @app.route('/')
@@ -13,8 +12,6 @@ def catalog():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        flash("Логин"+form.openid.data)
-        return redirect('/')
-    return render_template('login.html', title = "Авторизация", form = form)
+    if request.form.get('email'):
+        return request.form.get('email')
+    return render_template('login.html', title = "Авторизация")
