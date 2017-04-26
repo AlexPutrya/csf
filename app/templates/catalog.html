@@ -28,10 +28,10 @@
 		$("body").on('click', '.edit', function(e){
 			e.preventDefault();
 			var clickedId = this.id.split("-");
-			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split(' ');
+			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split('\n');
 			var replace_text = prompt("Измените текст", text_parts[0].trim()).trim();
 			if(replace_text != "" && replace_text != null){
-				$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<span class="badge delete" id="delete-' + clickedId[1] + '-' + clickedId[2]+'"> Удалить</span><span class="badge edit" id="edit-'+ clickedId[1] + '-' + clickedId[2] +'"> Редактировать</span>' );
+				$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<div class="btn-group pull-right"> <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button></div>');
 			}
 		})
 
@@ -53,17 +53,17 @@
 					<a href="#" class="btn btn-block btn-success" id="create-group">Создать <span class="glyphicon glyphicon-plus"></span></a>
 					<div class="list-group">
 						<a href="#" class="list-group-item" id="group-1">Бургеры
-							<span class="badge delete" id="delete-group-1"> Удалить</span>
-							<span class="badge edit" id="edit-group-1"> Редактировать</span>
+							<div class="btn-group pull-right">
+								<button type="button"  id="edit-group-1" class="btn-xs btn-info edit">Редактировать</button>
+								<button type="button" id="delete-group-1" class="btn-xs btn-danger delete">Удалить</button>
+							</div>
 						</a>
 						<a href="#" class="list-group-item" id="group-2">Салаты
-							<span class="badge delete" id="delete-group-2"> Удалить</span>
-							<span class="badge edit" id="edit-group-2"> Редактировать</span>
+							<div class="btn-group pull-right">
+								<button type="button"  id="edit-group-2" class="btn-xs btn-info edit">Редактировать</button>
+								<button type="button" id="delete-group-2" class="btn-xs btn-danger delete">Удалить</button>
+							</div>
 						</a>
-						<!--<a href="#" class="list-group-item" id="group-3">Напитки-->
-							<!--<span class="badge delete" id="delete-group-3"> Удалить</span>-->
-							<!--<span class="badge edit" id="edit-group-3"> Редактировать</span>-->
-						<!--</a>-->
 						<a href="#" class="list-group-item" id="group-3">Напитки
 							<div class="btn-group pull-right">
 								<button type="button"  id="edit-group-3" class="btn-xs btn-info edit">Редактировать</button>
@@ -85,11 +85,11 @@
 								<button type="button" id="delete-dish-1" class="btn-xs btn-danger delete">Удалить</button>
 							</div>
 						</a>
-						<a href="#" class="list-group-item" id="dish-1">Бургер американский
+						<a href="#" class="list-group-item" id="dish-2">Бургер европейский
 							<span class=" price"> | 80грн</span>
 							<div class="btn-group pull-right">
-								<button type="button"  id="edit-dish-1" class="btn-xs btn-info edit">Редактировать</button>
-								<button type="button" id="delete-dish-1" class="btn-xs btn-danger delete">Удалить</button>
+								<button type="button"  id="edit-dish-2" class="btn-xs btn-info edit">Редактировать</button>
+								<button type="button" id="delete-dish-2" class="btn-xs btn-danger delete">Удалить</button>
 							</div>
 						</a>
 					</div>
