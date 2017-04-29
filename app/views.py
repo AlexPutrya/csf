@@ -18,8 +18,8 @@ def category_create():
     # если отправлен запрос с именем категории добавить в бд
     if request.args.get('category_name'):
         cat = Category(request.args.get('category_name'))
-        # db.session.add(cat)
-        # db.session.commit()
+        db.session.add(cat)
+        db.session.commit()
     categories = Category.query.all()
     # создаем словарь для преобразования в json
     jcat = []

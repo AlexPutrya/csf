@@ -26,31 +26,38 @@ $(document).ready(function(){
 				});
 			}
 		});
+//		//создание группы
+//		$("body").on('click', '.btn-success', function(e){
+//			e.preventDefault();
+//			var clickedId = this.id.split('-')
+//			if(clickedId[0] == 'create'){
+//				var name = prompt("Название:", "");
+//				if(name != null && name != ''){
+//					$("#" + clickedId[1] + " .list-group").append('<a href="#" class="list-group-item" id="' + clickedId[1] + '-3">' + name +'<span class="badge delete" id="delete-' + clickedId[1] + '-3"> Удалить</span><span class="badge edit" id="edit-' + clickedId[1] + '-3"> Редактировать</span></a>');
+//				}
+//			}
+//		})
+
+
 		//создание группы
 		$("body").on('click', '.btn-success', function(e){
 			e.preventDefault();
 			var clickedId = this.id.split('-')
 			if(clickedId[0] == 'create'){
 				var name = prompt("Название:", "");
-				alert(name);
 				if(name != null && name != ''){
 					//проверяем если группа
 					if(clickedId[1] == 'group'){
 						var parametr = {
 							category_name: name
 						}
-
 						$.getJSON("/category/create", parametr)
 						.done(function(data, testStatus, jqXNR){
-						alert(data);
 							$("#group .list-group-item").remove();
-							var categories = '';
 							$.each(data.category, function(key, value){
-							    categories += '<a href="#" class="list-group-item" id="group-'+value.id+'">'+value.name+'<div class="btn-group pull-right"><button type="button"  id="edit-group-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-group-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>';
+							    $("#group .list-group").append('<a href="#" class="list-group-item" id="group-'+value.id+'">'+value.name+'<div class="btn-group pull-right"><button type="button"  id="edit-group-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-group-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>');
 							});
 						});
-
-						$("#group .list-group").html(categories);
 					}
 				}
 			}
