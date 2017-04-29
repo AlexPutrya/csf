@@ -24,9 +24,15 @@ def login():
         return request.form.get('email')
     return render_template('login.html', title = "Авторизация")
 
-
 @app.route('/dishes', methods=['GET', 'POST'])
 def dishes():
+    # dishes = list()
+    # dishes = request.get_json()
+    # dishes = {"name" : request.get_json('id')}
+    # return request.args.get('id')
+    # dishes=[]
+    # dishes.append({'name': request.args.get('id')})
+    # return jsonify(dishes = dishes)
     dishes = { "products": [
         {'id': 0, "name": "Бургер Американский"},
         {'id': 1, "name": "Бургер Азиатский"},

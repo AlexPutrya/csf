@@ -14,7 +14,7 @@
 				$(this).addClass('active')
 				
 				var parametr = {
-					id: clickedId
+					id: 'alex'
 				};
 				//отправляем запрос id категории и получаем на страницу товары в категории
 				$.getJSON("/dishes", parametr)
@@ -28,7 +28,7 @@
 					});	
 				});
 			}
-		})
+		});
 		//создание группы
 		$("body").on('click', '.btn-success', function(e){
 			e.preventDefault();
@@ -39,7 +39,7 @@
 					$("#" + clickedId[1] + " .list-group").append('<a href="#" class="list-group-item" id="' + clickedId[1] + '-3">' + name +'<span class="badge delete" id="delete-' + clickedId[1] + '-3"> Удалить</span><span class="badge edit" id="edit-' + clickedId[1] + '-3"> Редактировать</span></a>');
 				}
 			}
-		})
+		});
 		// редактирование группы
 		$("body").on('click', '.edit', function(e){
 			e.preventDefault();
@@ -49,7 +49,7 @@
 			if(replace_text != "" && replace_text != null){
 				$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<div class="btn-group pull-right"> <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button></div>');
 			}
-		})
+		});
 
 		// удаление группы
 		$("body").on('click', '.delete', function(e){
@@ -58,8 +58,8 @@
 			if(confirm("Вы точно хотите удалить ?")){
 				$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow');
 			}
-		})
-	})
+		});
+	});
 </script>
 		<div id="menu" class="row">
 			<h2>Меню</h2>
@@ -85,7 +85,7 @@
 					<a href="#" class="btn btn-block btn-success" id="create-dish">Создать <span class="glyphicon glyphicon-plus"></span></a>
 					<div class="list-group">
 						<a href="#" class="list-group-item" id="dish-1">Бургер американский
-							<span class=" price"> | 80грн</span>
+							<span class="price"> | 80грн</span>
 							<div class="btn-group pull-right">
 								<button type="button"  id="edit-dish-1" class="btn-xs btn-info edit">Редактировать</button>
 								<button type="button" id="delete-dish-1" class="btn-xs btn-danger delete">Удалить</button>
