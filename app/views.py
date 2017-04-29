@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify
-from app import app
-
+from app import app, db
+from app.models import User, Category, ROLE_USER, ROLE_ADMIN
 
 @app.route('/')
 def index():
@@ -8,7 +8,7 @@ def index():
 
 @app.route('/catalog')
 def catalog():
-    groups = [{'id': 0, 'name': "Напитки"},  {'id': 1, 'name': "Бургеры"}, {'id': 2, 'name': "Салаты"}]
+    groups = Category.query.all()
     dishes = [
         [
             {'id': 0, 'name': 'Бургер Американский'},
