@@ -8,15 +8,24 @@ def index():
 
 @app.route('/catalog')
 def catalog():
+    # получаем названия категорий из базы категории
     groups = Category.query.all()
-    dishes = [
-        [
-            {'id': 0, 'name': 'Бургер Американский'},
-            {'id': 0, 'name': 'Бургер Европейски'},
-            {'id': 0, 'name': 'Бургер Азиатский'},
-        ]
-    ]
     return render_template('catalog.html', groups = groups)
+
+# создание новой категории товаров и возврат нового списка категорий
+@app.route('/category/create', methods=['GET', 'POST'])
+def category_create():
+    # если отправлен запрос с именем категории добавить в бд
+    if request.args.get('category_name'):
+        cat = Category(request.args.get('category_name'))
+        # db.session.add(cat)
+        # db.session.commit()
+    categories = Category.query.all()
+    # создаем словарь для преобразования в json
+    jcat = []
+    for cat in categories:
+        jcat.append({'id': cat.id, 'name' : cat.name})
+    return jsonify({'category' : jcat})
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
