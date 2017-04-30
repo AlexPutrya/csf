@@ -27,6 +27,18 @@ def category_create():
         jcat.append({'id': cat.id, 'name' : cat.name})
     return jsonify({'category' : jcat})
 
+# удаление категории
+@app.route('/category/delete', methods=['GET', 'POST'])
+def category_delete():
+    id = request.args.get('category_id')
+    category = Category.query.filter_by(id=id).one()
+    db.session.delete(category)
+    db.session.commit()
+    return jsonify({'status' : 'ok'})
+
+
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.form.get('email'):

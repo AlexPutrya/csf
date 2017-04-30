@@ -14,43 +14,33 @@ $(document).ready(function(){
 					id: clickedId[1]
 				};
 				//отправляем запрос id категории и получаем на страницу товары в категории
-				$.getJSON("/dishes", parametr)
-				.done(function(data, testStatus, jqXHR){
-					//удаляем все продукты из колонки
-					$("#dish .list-group-item").remove();
-					// перебираем элементы и добавляем на страницу
-					$.each(data.products, function(key, value) {
-						$("#dish .list-group").append('<a href="#" class="list-group-item" id="dish-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span><div class="btn-group pull-right"><button type="button"  id="edit-dish-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-dish-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>'
-						);
-					});
-				});
+				// $.getJSON("/dishes", parametr)
+				// .done(function(data, testStatus, jqXHR){
+				// 	//удаляем все продукты из колонки
+				// 	$("#dish .list-group-item").remove();
+				// 	// перебираем элементы и добавляем на страницу
+				// 	$.each(data.products, function(key, value) {
+				// 		$("#dish .list-group").append('<a href="#" class="list-group-item" id="dish-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span><div class="btn-group pull-right"><button type="button"  id="edit-dish-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-dish-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>'
+				// 		);
+				// 	});
+				// });
 			}
 		});
-//		//создание группы
-//		$("body").on('click', '.btn-success', function(e){
-//			e.preventDefault();
-//			var clickedId = this.id.split('-')
-//			if(clickedId[0] == 'create'){
-//				var name = prompt("Название:", "");
-//				if(name != null && name != ''){
-//					$("#" + clickedId[1] + " .list-group").append('<a href="#" class="list-group-item" id="' + clickedId[1] + '-3">' + name +'<span class="badge delete" id="delete-' + clickedId[1] + '-3"> Удалить</span><span class="badge edit" id="edit-' + clickedId[1] + '-3"> Редактировать</span></a>');
-//				}
-//			}
-//		})
-
 
 		//создание группы
 		$("body").on('click', '.btn-success', function(e){
 			e.preventDefault();
 			var clickedId = this.id.split('-')
 			if(clickedId[0] == 'create'){
-				var name = prompt("Название:", "");
-				if(name != null && name != ''){
-					//проверяем если группа
-					if(clickedId[1] == 'group'){
+				//проверяем если нажата кнопка создания для группы
+				if(clickedId[1] == 'group'){
+					//запрашиваем название проверяем чтоб не ввели пустое
+					var name = prompt("Название:", "");
+					if(name != null && name != ''){
 						var parametr = {
 							category_name: name
 						}
+						//отправляем запрос, получаем полный список категорий, удаляем старые выводим новые
 						$.getJSON("/category/create", parametr)
 						.done(function(data, testStatus, jqXNR){
 							$("#group .list-group-item").remove();
@@ -73,12 +63,26 @@ $(document).ready(function(){
 			}
 		});
 
-		// удаление групы
+		// удаление групы или товара
 		$("body").on('click', '.delete', function(e){
 			e.preventDefault();
 			var clickedId = this.id.split("-");
-			if(confirm("Вы точно хотите удалить ?")){
-				$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow');
+			if(confirm("Вы точно хотите удалить элемент?")){
+				if(clickedId[1] == "group"){
+					parametr = {
+						category_id : clickedId[2]
+					}
+					$.getJSON("/category/delete", parametr)
+					.done(function(data, testStatus,jqXNR){
+						if (data['status'] == 'ok'){
+							$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow', function(){
+								$("#" + clickedId[1] +"-"+clickedId[2]).remove();
+							});
+						}
+						
+					});
+				}
+				
 			}
 		});
 	});
