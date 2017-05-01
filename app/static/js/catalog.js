@@ -55,16 +55,30 @@ $(document).ready(function(){
 		// редактирование группы
 		$("body").on('click', '.edit', function(e){
 			e.preventDefault();
+			e.stopPropagation();
 			var clickedId = this.id.split("-");
-			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split('\n');
-			var replace_text = prompt("Измените текст", text_parts[0].trim()).trim();
-			if(replace_text != "" && replace_text != null){
-				$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<div class="btn-group pull-right"> <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button></div>');
+			// редактируем группу
+			if(clickedId[1] == "group"){
+				var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split('\n');
+				var replace_text = prompt("Измените название", text_parts[0].trim()).trim();
+				if(replace_text != "" && replace_text != null){
+					parametr = {
+						category_id: clickedId[2],
+						cat_name: replace_text
+					}
+					$.getJSON("/category/update", parametr)
+					.done(function(data, testStatus, jqXNR){
+						if(data['status'] == 'ok'){
+							$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<div class="btn-group pull-right"> <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button></div>');
+						}
+					});
+				}
 			}
 		});
 
 		// удаление групы или товара
 		$("body").on('click', '.delete', function(e){
+			//убираем действие по умолчанию, и вызов обработчиков событи у родительских елементов
 			e.preventDefault();
 			e.stopPropagation();
 			var clickedId = this.id.split("-");
@@ -73,6 +87,7 @@ $(document).ready(function(){
 					parametr = {
 						category_id : clickedId[2]
 					}
+					// отправляем скрипту id категории которую нужно удалить, убираем из DOM категорию
 					$.getJSON("/category/delete", parametr)
 					.done(function(data, testStatus,jqXNR){
 						if (data['status'] == 'ok'){
