@@ -20,8 +20,8 @@ def category_create():
         cat = Category(request.args.get('category_name'))
         db.session.add(cat)
         db.session.commit()
+    # получаем все категории, создаем словарь для преобразования в json
     categories = Category.query.all()
-    # создаем словарь для преобразования в json
     jcat = []
     for cat in categories:
         jcat.append({'id': cat.id, 'name' : cat.name})
@@ -33,6 +33,16 @@ def category_delete():
     id = request.args.get('category_id')
     category = Category.query.filter_by(id=id).one()
     db.session.delete(category)
+    db.session.commit()
+    return jsonify({'status' : 'ok'})
+
+# редактирование категории
+@app.route('/category/update', methods=['GET', 'POST'])
+def category_update():
+    id = request.args.get('category_id')
+    cat_name = request.args.get('cat_name')
+    cat = Category.query.filter_by(id=id).one()
+    cat.name = cat_name
     db.session.commit()
     return jsonify({'status' : 'ok'})
 
