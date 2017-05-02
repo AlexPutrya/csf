@@ -55,8 +55,8 @@ def login():
         return request.form.get('email')
     return render_template('login.html', title = "Авторизация")
 
-@app.route('/dishes', methods=['GET', 'POST'])
-def dishes():
+@app.route('/products', methods=['GET', 'POST'])
+def products():
     # dishes = list()
     # dishes = request.get_json()
     # dishes = {"name" : request.get_json('id')}

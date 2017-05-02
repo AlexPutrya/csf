@@ -14,20 +14,20 @@ $(document).ready(function(){
 					id: clickedId[1]
 				};
 				//отправляем запрос id категории и получаем на страницу товары в категории
-				$.getJSON("/dishes", parametr)
+				$.getJSON("/products", parametr)
 				.done(function(data, testStatus, jqXHR){
 					//удаляем все продукты из колонки
-					$("#dish .list-group-item").remove();
+					$("#product .list-group-item").remove();
 					// перебираем элементы и добавляем на страницу
 					$.each(data.products, function(key, value) {
-						$("#dish .list-group").append('<a href="#" class="list-group-item" id="dish-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span><div class="btn-group pull-right"><button type="button"  id="edit-dish-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-dish-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>'
+						$("#product .list-group").append('<a href="#" class="list-group-item" id="product-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span><div class="btn-group pull-right"><button type="button"  id="edit-product-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-product-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>'
 						);
 					});
 				});
 			}
 		});
 
-		//создание группы
+		//создание группы/категории
 		$("body").on('click', '.btn-success', function(e){
 			e.preventDefault();
 			var clickedId = this.id.split('-')
@@ -35,7 +35,7 @@ $(document).ready(function(){
 				//проверяем если нажата кнопка создания для группы
 				if(clickedId[1] == 'group'){
 					//запрашиваем название проверяем чтоб не ввели пустое
-					var name = prompt("Название:", "");
+					var name = prompt("Название группы:", "");
 					if(name != null && name != ''){
 						var parametr = {
 							category_name: name
@@ -49,6 +49,8 @@ $(document).ready(function(){
 							});
 						});
 					}
+				}else if(clickedId[1] == 'product'){
+					var name = prompt("Название товара:", "");
 				}
 			}
 		});
