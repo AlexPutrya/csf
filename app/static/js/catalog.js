@@ -62,19 +62,36 @@ $(document).ready(function(){
 					}
 				// создание товара
 				}else if(clickedId[1] == 'product'){
-					$('#modal')
-					.css('display','block')
-					.animate({opacity: 1, top: '50%'}, 200)
-					$('#modal form').prepend(
-						'<div class="form-group">\
-    						<label>Название товара</label>\
-    						<input type="text" class="form-control" id="product_name">\
-  						</div>\
-  						<div class="form-group">\
-    						<label>Цена, грн.</label>\
-    						<input type="text" class="form-control" id="product_price">\
-  						</div>'
-  					);
+					// выводим модальное окно и добавляем два инпутама имя и цену
+					modal_data ='<div class="form-group">\
+		    						<label>Название товара</label>\
+		    						<input type="text" class="form-control" id="product-name">\
+		  						</div>\
+		  						<div class="form-group">\
+		    						<label>Цена, грн.</label>\
+		    						<input type="text" class="form-control" id="product-price">\
+		  						</div>'
+					show_modal(modal_data);
+  					// после клика  на "создать" проверяем введенные данные
+  					$("body").on('click', '#modal-create', function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						var product_name = $("#product-name").val();
+						var product_price = $("#product-price").val();
+						if(product_name == '' || product_price == ''){
+							return false;
+						}else{
+							parametr = {
+								product_name : product_name,
+								product_price : product_price
+							}
+							// формируем и отправляем запрос AJAX на создание товара в бд
+							$.getJSON("product/create", parametr)
+							.done(function(data, testStatus, jqXNR){
+								close_modal();
+							});
+						}
+					});
 
 					// var name = prompt("Название товара:", "");
 				}
@@ -138,6 +155,10 @@ $(document).ready(function(){
 		$("body").on('click', '#modal-close', function(e){
 			e.preventDefault();
 			e.stopPropagation();
+			close_modal();
+		});
+		// спрятать модальное окно и удалить все динамически бобавленные елементы
+		function close_modal(){
 			$('#modal').css('display','none');
 			$('#modal form').remove();
 			$('#modal').append(
@@ -146,5 +167,13 @@ $(document).ready(function(){
 					<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
 				</div></form>'
 			);
-		});
-	});
+		}
+		// создать окно с контентом который будет добавлен в начало
+		function show_modal(modal_data){
+			$('#modal')
+			.css('display','block')
+			.animate({opacity: 1, top: '50%'}, 200);
+			$('#modal form').prepend(modal_data);
+	}
+});
+
