@@ -76,14 +76,18 @@ $(document).ready(function(){
   					$("body").on('click', '#modal-create', function(e){
 						e.preventDefault();
 						e.stopPropagation();
+						// получаем название, цену, и id категории к которой бдует отнесен товар
 						var product_name = $("#product-name").val();
 						var product_price = $("#product-price").val();
+						var active_category = $(".active").attr('id').split('-');
+						alert(active_category[1]);
 						if(product_name == '' || product_price == ''){
 							return false;
 						}else{
 							parametr = {
 								product_name : product_name,
-								product_price : product_price
+								product_price : product_price,
+								category_id : active_category[1]
 							}
 							// формируем и отправляем запрос AJAX на создание товара в бд
 							$.getJSON("product/create", parametr)
@@ -92,8 +96,6 @@ $(document).ready(function(){
 							});
 						}
 					});
-
-					// var name = prompt("Название товара:", "");
 				}
 			}
 		});
