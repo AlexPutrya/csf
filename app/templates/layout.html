@@ -28,7 +28,10 @@
 				</div>
 			</header>
 		</div>
-        {% block body %}{% endblock %}
+        {% block body %}
+			{% block modal_window %}
+			{% endblock %}
+        {% endblock %}
     </div>
 </body>
 </html>

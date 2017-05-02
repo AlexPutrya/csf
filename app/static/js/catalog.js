@@ -20,7 +20,12 @@ $(document).ready(function(){
 					$("#product .list-group-item").remove();
 					// перебираем элементы и добавляем на страницу
 					$.each(data.products, function(key, value) {
-						$("#product .list-group").append('<a href="#" class="list-group-item" id="product-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span><div class="btn-group pull-right"><button type="button"  id="edit-product-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button><button type="button" id="delete-product-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>'
+						$("#product .list-group").append(
+							'<a href="#" class="list-group-item" id="product-'+value.id+'">'+value.name+'<span class=" price"> | 80грн</span>\
+							<div class="btn-group pull-right">\
+								<button type="button"  id="edit-product-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button> \
+								<button type="button" id="delete-product-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button>\
+								</div></a>'
 						);
 					});
 				});
@@ -45,12 +50,33 @@ $(document).ready(function(){
 						.done(function(data, testStatus, jqXNR){
 							$("#group .list-group-item").remove();
 							$.each(data.category, function(key, value){
-							    $("#group .list-group").append('<a href="#" class="list-group-item" id="group-'+value.id+'">'+value.name+'\n<div class="btn-group pull-right"><button type="button"  id="edit-group-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-group-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button></div></a>');
+							    $("#group .list-group").append(
+							    	'<a href="#" class="list-group-item" id="group-'+value.id+'">'+value.name+
+							    	'\n<div class="btn-group pull-right">\
+							    		<button type="button" id="edit-group-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button>\
+							    		<button type="button" id="delete-group-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button>\
+							    	</div></a>'
+							    );
 							});
 						});
 					}
+				// создание товара
 				}else if(clickedId[1] == 'product'){
-					var name = prompt("Название товара:", "");
+					$('#modal')
+					.css('display','block')
+					.animate({opacity: 1, top: '50%'}, 200)
+					$('#modal form').prepend(
+						'<div class="form-group">\
+    						<label>Название товара</label>\
+    						<input type="text" class="form-control" id="product_name">\
+  						</div>\
+  						<div class="form-group">\
+    						<label>Цена, грн.</label>\
+    						<input type="text" class="form-control" id="product_price">\
+  						</div>'
+  					);
+
+					// var name = prompt("Название товара:", "");
 				}
 			}
 		});
@@ -71,7 +97,12 @@ $(document).ready(function(){
 					$.getJSON("/category/update", parametr)
 					.done(function(data, testStatus, jqXNR){
 						if(data['status'] == 'ok'){
-							$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text + '<div class="btn-group pull-right"> <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button> <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button></div>');
+							$('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text +
+								'<div class="btn-group pull-right">\
+								<button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button>\
+								<button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button>\
+								</div>'
+							);
 						}
 					});
 				}
@@ -102,5 +133,18 @@ $(document).ready(function(){
 				}
 				
 			}
+		});
+		// закрытие модального окна и возвращение к обычному варианту
+		$("body").on('click', '#modal-close', function(e){
+			e.preventDefault();
+			e.stopPropagation();
+			$('#modal').css('display','none');
+			$('#modal form').remove();
+			$('#modal').append(
+				'<form><div class="form-group">\
+					<button type="submit" class="btn btn-default" id="modal-create">Создать</button>\
+					<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
+				</div></form>'
+			);
 		});
 	});
