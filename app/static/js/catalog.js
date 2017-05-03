@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	// активация по нажатию на группу
+	// Загрузка списка товаров в группе
 	$("body").on('click', '.list-group-item', function(e){
 		//отменяем стандартное действие
 		e.preventDefault();
@@ -10,7 +10,7 @@ $(document).ready(function(){
 			// удаляем со всех элементов класс активной кнопки и делаем активной другую
 			$(".list-group-item").removeClass('active');
 			$(this).addClass('active');
-			// даем возможность создавать товары
+			// когда категория выбрана, даем возможность создавать товары
 			$('#product .btn-success').removeClass('disabled');
 
 			var parametr = {
@@ -24,7 +24,7 @@ $(document).ready(function(){
 		}
 	});
 
-	//создание группы/категории
+	//Создание группы или товара
 	$("body").on('click', '.btn-success', function(e){
 		e.preventDefault();
 		e.stopPropagation();
@@ -63,7 +63,11 @@ $(document).ready(function(){
 	  						<div class="form-group">\
 	    						<label>Цена, грн.</label>\
 	    						<input type="text" class="form-control" id="product-price">\
-	  						</div>'
+	  						</div>\
+	  						<div class="form-group">\
+								<button type="submit" class="btn btn-default" id="modal-create">Создать</button>\
+								<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
+							</div>';
 				show_modal(modal_data);
 					// после клика  на "создать" проверяем введенные данные
 				// $("body").on('click', '#modal-create', function(e){
@@ -93,7 +97,7 @@ $(document).ready(function(){
 			}
 		}
 	});
-	// редактирование группы
+	// Редактирование группы
 	$("body").on('click', '.edit', function(e){
 		e.preventDefault();
 		e.stopPropagation();
@@ -119,10 +123,47 @@ $(document).ready(function(){
 					}
 				});
 			}
+		}else if(clickedId[1] == "product"){
+			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split(' ');
+			modal_data ='<div class="form-group">\
+    						<label>Название товара</label>\
+    						<input type="text" class="form-control" id="product-name" value="'+text_parts[0]+'">\
+  						</div>\
+  						<div class="form-group">\
+    						<label>Цена, грн.</label>\
+    						<input type="text" class="form-control" id="product-price" value="'+text_parts[2]+'">\
+  						</div>\
+  						<div class="form-group">\
+							<button type="submit" class="btn btn-default" id="modal-edit">Редактировать</button>\
+							<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
+						</div>';
+  			show_modal(modal_data);
+  			$("#modal-edit").click(function(e){
+  				e.preventDefault();
+  				e.stopPropagation();
+  				var product_name = $("#product-name").val();
+				var product_price = $("#product-price").val();
+				var product_id = clickedId[2];
+				alert(product_id);
+				if(product_name == '' || product_price == ''){
+					return false;
+				}else{
+					parametr = {
+						product_name : product_name,
+						product_price : product_price,
+						product_id : product_id
+					}
+					// формируем и отправляем запрос AJAX на редактирвоание товара
+					$.getJSON("product/create", parametr)
+					.done(function(data, testStatus, jqXNR){
+						close_modal();
+					});
+				}
+  			});
 		}
 	});
 
-	// удаление групы или товара
+	// Удаление групы или товара
 	$("body").on('click', '.delete', function(e){
 		//убираем действие по умолчанию, и вызов обработчиков событи у родительских елементов
 		e.preventDefault();
@@ -163,32 +204,29 @@ $(document).ready(function(){
 			
 		}
 	});
-	// закрытие модального окна и возвращение к обычному варианту
+	// Закрытие модального окна и возвращение к обычному варианту
 	$("body").on('click', '#modal-close', function(e){
 		e.preventDefault();
 		e.stopPropagation();
 		close_modal();
 	});
-	// спрятать модальное окно и удалить все динамически добавленные елементы
+	// Спрятать модальное окно и удалить все динамически добавленные елементы
 	function close_modal(){
 		$('#modal').css('display','none');
 		$('#modal-create').unbind();
 		$('#modal form').remove();
 		$('#modal').append(
-			'<form><div class="form-group">\
-				<button type="submit" class="btn btn-default" id="modal-create">Создать</button>\
-				<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
-			</div></form>'
+			'<form></form>'
 		);
 	}
-	// создать окно с контентом который будет добавлен в начало
+	// Cоздать окно с контентом который будет добавлен в начало
 	function show_modal(modal_data){
 		$('#modal')
 		.css('display','block')
 		.animate({opacity: 1, top: '50%'}, 200);
 		$('#modal form').prepend(modal_data);
 	}
-	// обновление колонки с товарами, из json данные должны прийти под ключем "products"
+	// Обновление колонки с товарами, из json данные должны прийти под ключем "products"
 	function refresh_product(data){
 		//удаляем все продукты из колонки
 		$("#product .list-group-item").remove();
