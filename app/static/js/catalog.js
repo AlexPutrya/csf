@@ -62,7 +62,7 @@ $(document).ready(function(){
 					}
 				// создание товара
 				}else if(clickedId[1] == 'product'){
-					// выводим модальное окно и добавляем два инпутама имя и цену
+					// выводим модальное окно и добавляем два инпута имя и цену
 					modal_data ='<div class="form-group">\
 		    						<label>Название товара</label>\
 		    						<input type="text" class="form-control" id="product-name">\
@@ -80,7 +80,6 @@ $(document).ready(function(){
 						var product_name = $("#product-name").val();
 						var product_price = $("#product-price").val();
 						var active_category = $(".active").attr('id').split('-');
-						alert(active_category[1]);
 						if(product_name == '' || product_price == ''){
 							return false;
 						}else{
