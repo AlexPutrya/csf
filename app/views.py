@@ -82,3 +82,12 @@ def product_create():
         for prod in products:
             jprod.append({'id' : prod.id, 'name' : prod.name, 'price' : prod.price})
         return jsonify({'products' :jprod})
+
+# удаление товара
+@app.route('/product/delete', methods=["GET", "POST"])
+def product_delete():
+    id = request.args.get('product_id')
+    product = Product.query.filter_by(id=id).one()
+    db.session.delete(product)
+    db.session.commit()
+    return jsonify({'status' : 'ok'})

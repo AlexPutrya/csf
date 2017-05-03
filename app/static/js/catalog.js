@@ -127,12 +127,28 @@ $(document).ready(function(){
 		e.stopPropagation();
 		var clickedId = this.id.split("-");
 		if(confirm("Вы точно хотите удалить элемент?")){
+			// Удаление группы 
 			if(clickedId[1] == "group"){
 				parametr = {
 					category_id : clickedId[2]
 				}
 				// отправляем скрипту id категории которую нужно удалить, убираем из DOM категорию
 				$.getJSON("/category/delete", parametr)
+				.done(function(data, testStatus,jqXNR){
+					if (data['status'] == 'ok'){
+						$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow', function(){
+							$("#" + clickedId[1] +"-"+clickedId[2]).remove();
+						});
+					}
+					
+				});
+			// Удаление товара
+			}else if(clickedId[1] == "product"){
+				parametr = {
+					product_id : clickedId[2]
+				}
+				// отправляем скрипту id товара который нужно удалить, убираем из DOM товар
+				$.getJSON("/product/delete", parametr)
 				.done(function(data, testStatus,jqXNR){
 					if (data['status'] == 'ok'){
 						$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow', function(){
