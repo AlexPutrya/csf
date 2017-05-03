@@ -7,8 +7,11 @@ $(document).ready(function(){
 		var clickedId = this.id.split('-');
 		//проверяем чтоб нажатие было на группу
 		if(clickedId[0] == 'group'){
+			// удаляем со всех элементов класс активной кнопки и делаем активной другую
 			$(".list-group-item").removeClass('active');
-			$(this).addClass('active')
+			$(this).addClass('active');
+			// даем возможность создавать товары
+			$('#product .btn-success').removeClass('disabled');
 
 			var parametr = {
 				id: clickedId[1]
