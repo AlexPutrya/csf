@@ -53,22 +53,15 @@ def category_update():
     db.session.commit()
     return jsonify({'status' : 'ok'})
 
-
+# загрузка списка товаров по id категории
 @app.route('/products', methods=['GET', 'POST'])
 def products():
-    # dishes = list()
-    # dishes = request.get_json()
-    # dishes = {"name" : request.get_json('id')}
-    # return request.args.get('id')
-    # dishes=[]
-    # dishes.append({'name': request.args.get('id')})
-    # return jsonify(dishes = dishes)
-    dishes = { "products": [
-        {'id': 0, "name": "Бургер Американский"},
-        {'id': 1, "name": "Бургер Азиатский"},
-        {'id': 2, "name": "Европейский"}
-    ]}
-    return jsonify(dishes)
+    id_category = request.args.get('id')
+    products = Product.query.filter_by(id_category = id_category).all()
+    jprod=[]
+    for prod in products:
+        jprod.append({'id' : prod.id, 'name' : prod.name, 'price' : prod.price})
+    return jsonify({'products' : jprod})
 
 # создание товара
 @app.route('/product/create', methods=["GET", "POST"])
