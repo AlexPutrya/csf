@@ -144,7 +144,6 @@ $(document).ready(function(){
   				var product_name = $("#product-name").val();
 				var product_price = $("#product-price").val();
 				var product_id = clickedId[2];
-				alert(product_id);
 				if(product_name == '' || product_price == ''){
 					return false;
 				}else{
@@ -154,9 +153,17 @@ $(document).ready(function(){
 						product_id : product_id
 					}
 					// формируем и отправляем запрос AJAX на редактирвоание товара
-					$.getJSON("product/create", parametr)
+					$.getJSON("product/update", parametr)
 					.done(function(data, testStatus, jqXNR){
 						close_modal();
+						if(data['status'] == 'ok'){
+							$('#'+ clickedId[1] + '-' + clickedId[2]).html(product_name +'<span class=" price"> | ' + product_price + ' грн</span>\
+								<div class="btn-group pull-right">\
+								<button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button>\
+								<button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button>\
+								</div>'
+							);
+						}
 					});
 				}
   			});
@@ -213,7 +220,6 @@ $(document).ready(function(){
 	// Спрятать модальное окно и удалить все динамически добавленные елементы
 	function close_modal(){
 		$('#modal').css('display','none');
-		$('#modal-create').unbind();
 		$('#modal form').remove();
 		$('#modal').append(
 			'<form></form>'
@@ -230,7 +236,7 @@ $(document).ready(function(){
 	function refresh_product(data){
 		//удаляем все продукты из колонки
 		$("#product .list-group-item").remove();
-		// перебираем элементы и добавляем на страницу
+		// перебираем элементы товаров и добавляем на страницу
 		$.each(data.products, function(key, value) {
 			$("#product .list-group").append(
 				'<a href="#" class="list-group-item" id="product-'+value.id+'">'+value.name+'<span class=" price"> | '+value.price+' грн</span>\

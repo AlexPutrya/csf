@@ -91,3 +91,13 @@ def product_delete():
     db.session.delete(product)
     db.session.commit()
     return jsonify({'status' : 'ok'})
+
+# редактирование товара
+@app.route('/product/update', methods=["GET", "POST"])
+def product_update():
+    parametr = request.args
+    product = Product.query.filter_by(id=parametr['product_id']).one()
+    product.name = parametr['product_name']
+    product.price = parametr['product_price']
+    db.session.commit()
+    return jsonify({'status' : 'ok'})
