@@ -1,11 +1,18 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify
 from app import app, db
-from app.models import User, Category, ROLE_USER, ROLE_ADMIN
+from app.models import User, Category, Product
 
 @app.route('/')
 def index():
     return render_template('main.html')
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.form.get('email'):
+        return request.form.get('email')
+    return render_template('login.html', title = "Авторизация")
+
+# страиница каталога, получаем список категорий и выводим их
 @app.route('/catalog')
 def catalog():
     # получаем названия категорий из базы категории
@@ -47,14 +54,6 @@ def category_update():
     return jsonify({'status' : 'ok'})
 
 
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.form.get('email'):
-        return request.form.get('email')
-    return render_template('login.html', title = "Авторизация")
-
 @app.route('/products', methods=['GET', 'POST'])
 def products():
     # dishes = list()
@@ -70,3 +69,23 @@ def products():
         {'id': 2, "name": "Европейский"}
     ]}
     return jsonify(dishes)
+
+# создание товара
+@app.route('/product/create', methods=["GET", "POST"])
+def product_create():
+    parametr = request.args
+    category = Category.query.filter_by(id=parametr['category_id']).first()
+    # проверяем есть ли такая категория
+    if not category:
+        return jsonify({'status' : 'error'})
+    else:
+        # создаем новый товар и добавляем в бд
+        product = Product(parametr['category_id'], parametr['product_name'], parametr['product_price'])
+        db.session.add(product)
+        db.session.commit()
+        # получаем обновленный список товаров этой категории и формируем для отправки json
+        products = Product.query.filter_by(id_category = parametr['category_id']).all()
+        jprod = []
+        for prod in products:
+            jprod.append({'id' : prod.id, 'name' : prod.name, 'price' : prod.price})
+        return jsonify({'products' :jprod})

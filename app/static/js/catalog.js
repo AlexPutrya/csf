@@ -37,7 +37,7 @@ $(document).ready(function(){
 			e.preventDefault();
 			var clickedId = this.id.split('-')
 			if(clickedId[0] == 'create'){
-				//проверяем если нажата кнопка создания для группы
+				//Создание группы
 				if(clickedId[1] == 'group'){
 					//запрашиваем название проверяем чтоб не ввели пустое
 					var name = prompt("Название группы:", "");
@@ -60,7 +60,7 @@ $(document).ready(function(){
 							});
 						});
 					}
-				// создание товара
+				// Создание товара
 				}else if(clickedId[1] == 'product'){
 					// выводим модальное окно и добавляем два инпута имя и цену
 					modal_data ='<div class="form-group">\
