@@ -15,7 +15,7 @@ def login():
 # страиница каталога, получаем список категорий и выводим их
 @app.route('/catalog')
 def catalog():
-    # получаем названия категорий из базы категории
+    # получаем названия категорий из базы
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
 

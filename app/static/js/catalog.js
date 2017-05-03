@@ -27,6 +27,7 @@ $(document).ready(function(){
 	//создание группы/категории
 	$("body").on('click', '.btn-success', function(e){
 		e.preventDefault();
+		e.stopPropagation();
 		var clickedId = this.id.split('-')
 		if(clickedId[0] == 'create'){
 			//Создание группы
@@ -65,10 +66,11 @@ $(document).ready(function(){
 	  						</div>'
 				show_modal(modal_data);
 					// после клика  на "создать" проверяем введенные данные
-					$("body").on('click', '#modal-create', function(e){
+				// $("body").on('click', '#modal-create', function(e){
+				$('#modal-create').click(function(e){
 					e.preventDefault();
 					e.stopPropagation();
-					// получаем название, цену, и id категории к которой бдует отнесен товар
+					// получаем название, цену, и id категории к которой будет отнесен товар
 					var product_name = $("#product-name").val();
 					var product_price = $("#product-price").val();
 					var active_category = $(".active").attr('id').split('-');
@@ -167,9 +169,10 @@ $(document).ready(function(){
 		e.stopPropagation();
 		close_modal();
 	});
-	// спрятать модальное окно и удалить все динамически бобавленные елементы
+	// спрятать модальное окно и удалить все динамически добавленные елементы
 	function close_modal(){
 		$('#modal').css('display','none');
+		$('#modal-create').unbind();
 		$('#modal form').remove();
 		$('#modal').append(
 			'<form><div class="form-group">\
