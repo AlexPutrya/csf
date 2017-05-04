@@ -1,6 +1,7 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify
 from app import app, db
 from app.models import User, Category, Product
+from .helpers import prepare_category, prepare_product
 
 @app.route('/')
 def index():
@@ -31,12 +32,8 @@ def category_create():
         cat = Category(request.args.get('category_name'))
         db.session.add(cat)
         db.session.commit()
-    # получаем все категории, создаем словарь для преобразования в json
-    categories = Category.query.all()
-    jcat = []
-    for cat in categories:
-        jcat.append({'id': cat.id, 'name' : cat.name})
-    return jsonify({'category' : jcat})
+    jcat = prepare_category()
+    return jsonify(jcat)
 
 # удаление категории
 @app.route('/category/delete', methods=['GET', 'POST'])
@@ -61,11 +58,8 @@ def category_update():
 @app.route('/products', methods=['GET', 'POST'])
 def products():
     id_category = request.args.get('id')
-    products = Product.query.filter_by(id_category = id_category).all()
-    jprod=[]
-    for prod in products:
-        jprod.append({'id' : prod.id, 'name' : prod.name, 'price' : prod.price})
-    return jsonify({'products' : jprod})
+    jprod=prepare_product(id_category)
+    return jsonify(jprod)
 
 # создание товара
 @app.route('/product/create', methods=["GET", "POST"])
@@ -81,11 +75,8 @@ def product_create():
         db.session.add(product)
         db.session.commit()
         # получаем обновленный список товаров этой категории и формируем для отправки json
-        products = Product.query.filter_by(id_category = parametr['category_id']).all()
-        jprod = []
-        for prod in products:
-            jprod.append({'id' : prod.id, 'name' : prod.name, 'price' : prod.price})
-        return jsonify({'products' :jprod})
+        jprod = prepare_product(parametr['category_id'])
+        return jsonify(jprod)
 
 # удаление товара
 @app.route('/product/delete', methods=["GET", "POST"])
