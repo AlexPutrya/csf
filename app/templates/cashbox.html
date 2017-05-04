@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<!--Подключаем скрипт для CRUD -->
+<script src="{{ url_for('static', filename = 'js/cashbox.js') }}"></script>
+		<div class="main" class="row">
+			<div class="col-md-4">
+				<div class="cashbox-catalog">
+					<h1>Категории</h1>
+					<button type="button" id="back" class="btn btn-info">Назад</button>
+					<div class="">
+						<div class="col-md-6 quad">
+							<div class="list-group">
+								<a href="#" class="list-group-item" id="">TEST</a>
+								<a href="#" class="list-group-item" id="">TEST2</a>
+								<a href="#" class="list-group-item" id="">TEST2</a>
+							</div>
+						</div>
+						<div class="col-md-6 quad">
+							<div class="list-group">
+								<a href="#" class="list-group-item disabled" id="">TEST</a>
+								<a href="#" class="list-group-item" id="">TEST2</a>
+								<a href="#" class="list-group-item" id="">TEST2</a>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<div class="col-md-8">
+				
+			</div>
+		</div>
+		{% block modal_window %}
+		<div id="modal">
+			<form>
+			</form>
+		</div>
+		{% endblock %}
+{% endblock %}
+

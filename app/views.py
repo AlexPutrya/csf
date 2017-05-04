@@ -19,6 +19,10 @@ def catalog():
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
 
+# страница с кассой
+@app.route('/cashbox', methods=["GET", "POST"])
+def cashbox():
+    return render_template('cashbox.html')
 # создание новой категории товаров и возврат нового списка категорий
 @app.route('/category/create', methods=['GET', 'POST'])
 def category_create():

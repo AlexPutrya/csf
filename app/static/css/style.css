@@ -46,7 +46,7 @@ h3 {
 }
 
 /*catalog page*/
-#menu {
+#main {
 	margin: 0 auto;
 	margin-top: 20px;
 	width: 90%;
@@ -89,4 +89,19 @@ h3 {
 	opacity: 0; /* пoлнoстью прoзрaчнo для aнимирoвaния */
 	z-index: 999; /* oкнo дoлжнo быть нaибoлее бoльшем слoе */
 	padding: 20px 10px;
+}
+
+/*Cashbox page*/
+.cashbox-catalog {
+	background-color: white;
+	width: 100%;
+	min-height: 35em;
+	border-radius: 5px;
+}
+.cashbox-catalog h1 {
+	color: black;
+	text-align: center;
+}
+.quad {
+	padding: 0 2px 0 2px;
 }
