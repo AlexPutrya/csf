@@ -3,15 +3,16 @@
 {% block body %}
 <!--Подключаем скрипт для CRUD -->
 <script src="{{ url_for('static', filename = 'js/cashbox.js') }}"></script>
+
 		<div class="main" class="row">
 			<div class="col-md-3">
 				<div class="cashbox category-box">
 					<h1>Категории</h1>
 					<button type="button" id="back" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-arrow-left"></span> Назад</button>
 					<ul class="list-group">
-						<a href="#" class="list-group-item" id="">TEST</a>
-						<a href="#" class="list-group-item" id="">TEST2</a>
-						<a href="#" class="list-group-item" id="">TEST2</a>
+						{% for group in groups %}
+						<a href="#" class="list-group-item" id="group-{{ group.id }}">{{ group.name }}</a>
+						{% endfor %}
 					</ul>
 				</div>
 			</div>
