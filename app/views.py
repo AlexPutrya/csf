@@ -23,8 +23,14 @@ def catalog():
 # страница с кассой
 @app.route('/cashbox', methods=["GET", "POST"])
 def cashbox():
-    groups = Category.query.all()
-    return render_template('cashbox.html', groups = groups)
+    # если запрос через ajax
+    if request.args.get('category'):
+        jcat = prepare_category()
+        return jsonify(jcat)
+    else:
+        groups = Category.query.all()
+        return render_template('cashbox.html', groups = groups)
+
 # создание новой категории товаров и возврат нового списка категорий
 @app.route('/category/create', methods=['GET', 'POST'])
 def category_create():
