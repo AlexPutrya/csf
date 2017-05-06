@@ -1,4 +1,7 @@
 $(document).ready(function(){
+    // после загрузки страницы отрисовываем группы в блоке
+    show_categories();
+
     // Загрузка списка товаров в группе
 	$("body").on('click', '.list-group-item', function(e){
 		//отменяем стандартное действие
@@ -26,11 +29,14 @@ $(document).ready(function(){
 		}
 	});
 
+    // при нажатии назад возвращает список категорий
 	$("body").on('click', '#back', function(){
-	    var parametr = {
-	        category : true
-	    };
-        $.getJSON("/cashbox", parametr)
+	    show_categories();
+	});
+
+    // делает запрос скрипту и отрисовывает список категорий
+	function show_categories(){
+	    $.getJSON("/categories")
 			.done(function(data, testStatus, jqXHR){
                 //очищаем группы для загрузки товаров
 			    $(".category-box .list-group-item").remove();
@@ -41,7 +47,6 @@ $(document).ready(function(){
                     '<a href="#" class="list-group-item" id="group-'+ cat.id +'">'+ cat.name +'</a>'
                     );
                 });
-
 			});
-	});
+	}
 });

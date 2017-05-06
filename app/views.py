@@ -20,16 +20,21 @@ def catalog():
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
 
-# страница с кассой
+# общая страница с кассой
 @app.route('/cashbox', methods=["GET", "POST"])
 def cashbox():
-    # если запрос через ajax
-    if request.args.get('category'):
-        jcat = prepare_category()
-        return jsonify(jcat)
-    else:
-        groups = Category.query.all()
-        return render_template('cashbox.html', groups = groups)
+    return render_template('cashbox.html')
+
+# возвращаем список категорий
+@app.route('/categories', methods=["GET", "POST"])
+def categories():
+    jcat = prepare_category()
+    return jsonify(jcat)
+
+# проверяем наличие сессионных переменных и возвращаем данные для кассы
+# @app.route('/cashbox/sales', methods=["GET", "POST"])
+# def cashbox_sales():
+#
 
 # создание новой категории товаров и возврат нового списка категорий
 @app.route('/category/create', methods=['GET', 'POST'])
