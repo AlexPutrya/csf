@@ -95,7 +95,7 @@ h3 {
 .cashbox {
 	background-color: white;
 	width: 100%;
-	min-height: 35em;
+	min-height: 25em;
 	border-radius: 5px;
 }
 .category-box h1 {
@@ -109,4 +109,9 @@ h3 {
 
 .quad {
 	padding: 0 2px 0 2px;
+}
+
+/*меню кассы */
+#product-list {
+    min-height: 15em;
 }

@@ -19,21 +19,25 @@
 			<div class="col-md-9">
 				<div class="cashbox cashbox-menu">
 					<!--ряд панели с кнопками-->
-					<row id="header-toolbar">
+					<div  class="row" id="header-toolbar">
 						<div class="col-md-2">
 							<button class="btn btn-default btn" id="open-cashbox">Открыть смену</button>
 						</div>
 						<div class="col-md-2">
 							<button class="btn btn-default disabled" id="close-cashbox">Закрыть смену</button>
 						</div>
-					</row>
+					</div>
 					<!--ряд списка товаров в корзине-->
-					<row id='product-list'>
-						<div class="col-md-12">
-
-						</div>
-					</row>
-					<row id="footer-toolbar">
+					<div class="row" id='product-title'>
+						<div class="col-md-1">№</div>
+						<div class="col-md-5">Товар</div>
+						<div class="col-md-2">Количество</div>
+						<div class="col-md-2">Цена</div>
+						<div class="col-md-2">Сумма</div>
+					</div>
+					<div class="row" id='product-list'>
+					</div>
+					<div class="row" id="footer-toolbar">
 						<div class="col-md-2">
 							<p>Деньги в кассе: <br>
 							<span id=""cash>1000 грн</span>
@@ -42,7 +46,7 @@
 						<div class="col-md-2 col-md-offset-8">
 							<button class="btn btn-default btn-lg disabled" id="commit-check">Пробить</button>
 						</div>
-					</row>
+					</div>
 				</div>
 			</div>
 		</div>
