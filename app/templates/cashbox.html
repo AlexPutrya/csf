@@ -27,7 +27,7 @@
 							<button class="btn btn-default disabled" id="close-cashbox"><span class="glyphicon glyphicon-check"></span> Закрыть смену</button>
 						</div>
 					</div>
-					<!--ряд списка товаров в корзине-->
+					<!--ряд заголовка корзины-->
 					<div class="row" id='product-title'>
 						<div class="col-md-1">№</div>
 						<div class="col-md-5">Товар</div>
@@ -35,8 +35,23 @@
 						<div class="col-md-2">Цена</div>
 						<div class="col-md-2">Сумма</div>
 					</div>
-					<div class="row" id='product-list'>
+					<!--блок для списка продкутов-->
+					<div id='product-list'>
+						<!--ряд елемента корзины-->
+						<div class="row product">
+							<div class="col-md-1">1</div>
+							<div class="col-md-5">Пиво Staropramen</div>
+							<div class="col-md-2">25шт</div>
+							<div class="col-md-2">128 грн</div>
+							<div class="col-md-2">1000грн</div>
+						</div>
+						<!--ряд с суммой чека-->
+						<div class="row">
+							<div class="col-md-2 col-md-offset-8">Сумма чека:</div>
+							<div class="col-md-2">125 грн</div>
+						</div>
 					</div>
+					<!--нижний тулбар с кнопкой пробить и общим количеством денег в кассе-->
 					<div class="row" id="footer-toolbar">
 						<div class="col-md-2">
 							<p>Деньги в кассе: <br>
