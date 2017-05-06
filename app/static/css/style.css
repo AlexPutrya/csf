@@ -111,7 +111,13 @@ h3 {
 	padding: 0 2px 0 2px;
 }
 
+
 /*меню кассы */
+.cashbox-menu {
+    text-align: center;
+}
+
+
 #product-list {
     min-height: 15em;
 }
