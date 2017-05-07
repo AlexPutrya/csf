@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    // после загрузки страницы отрисовываем группы в блоке
-    show_categories();
+
+    reload();
 
     // Загрузка списка товаров в группе
 	$("body").on('click', '.list-group-item', function(e){
@@ -34,6 +34,26 @@ $(document).ready(function(){
 	    show_categories();
 	});
 
+	$("#open-cashbox").click(function(e){
+	    e.preventDefault();
+		e.stopPropagation();
+	    $.getJSON("/cashbox/open")
+		.done(function(data, testStatus, jqXHR){
+            reload();
+        });
+	});
+
+	$("#close-cashbox").click(function(e){
+	    e.preventDefault();
+		e.stopPropagation();
+	    $.getJSON("/cashbox/close")
+		.done(function(data, testStatus, jqXHR){
+            reload();
+        });
+	});
+
+
+
     // делает запрос скрипту и отрисовывает список категорий
 	function show_categories(){
 	    $.getJSON("/categories")
@@ -48,5 +68,24 @@ $(document).ready(function(){
                     );
                 });
 			});
+	}
+
+	function reload(){
+	    // после загрузки страницы отрисовываем группы в блоке
+        show_categories();
+        $.getJSON("/cashbox/sales")
+        .done(function(data, testStatus, jqXHR){
+            //	касса закрыта и она пустая без элементов
+            if (data.cashbox_status == 0){
+                $("#commit-check").addClass("disabled");
+                $("#close-cashbox").addClass("disabled");
+                $("#open-cashbox").removeClass("disabled");
+            //	касса открыта
+            }else if(data.cashbox_status == 1){
+                $("#commit-check").removeClass("disabled");
+                $("#close-cashbox").removeClass("disabled");
+                $("#open-cashbox").addClass("disabled");
+            }
+	    });
 	}
 });

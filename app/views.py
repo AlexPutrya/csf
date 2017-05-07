@@ -1,7 +1,9 @@
-from flask import render_template, url_for, redirect, flash, request, jsonify
+from flask import render_template, url_for, redirect, flash, request, jsonify, session
 from app import app, db
 from app.models import User, Category, Product
 from .helpers import prepare_category, prepare_product
+
+app.before_request(lambda: setattr(session, 'permanent', True))
 
 @app.route('/')
 def index():
@@ -13,28 +15,16 @@ def login():
         return request.form.get('email')
     return render_template('login.html', title = "Авторизация")
 
+'''
+В дальнейшем сделать рефакторинг с использование Blueprint
+Контроллеры для страницы каталогв
+'''
 # страиница каталога, получаем список категорий и выводим их
 @app.route('/catalog')
 def catalog():
     # получаем названия категорий из базы
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
-
-# общая страница с кассой
-@app.route('/cashbox', methods=["GET", "POST"])
-def cashbox():
-    return render_template('cashbox.html')
-
-# возвращаем список категорий
-@app.route('/categories', methods=["GET", "POST"])
-def categories():
-    jcat = prepare_category()
-    return jsonify(jcat)
-
-# проверяем наличие сессионных переменных и возвращаем данные для кассы
-# @app.route('/cashbox/sales', methods=["GET", "POST"])
-# def cashbox_sales():
-#
 
 # создание новой категории товаров и возврат нового списка категорий
 @app.route('/category/create', methods=['GET', 'POST'])
@@ -65,13 +55,6 @@ def category_update():
     cat.name = cat_name
     db.session.commit()
     return jsonify({'status' : 'ok'})
-
-# загрузка списка товаров по id категории
-@app.route('/products', methods=['GET', 'POST'])
-def products():
-    id_category = request.args.get('id')
-    jprod=prepare_product(id_category)
-    return jsonify(jprod)
 
 # создание товара
 @app.route('/product/create', methods=["GET", "POST"])
@@ -108,3 +91,48 @@ def product_update():
     product.price = parametr['product_price']
     db.session.commit()
     return jsonify({'status' : 'ok'})
+
+'''
+Все контроллеры которые участвуют в кассе
+'''
+# общая страница с кассой
+@app.route('/cashbox', methods=["GET", "POST"])
+def cashbox():
+    return render_template('cashbox.html')
+
+# проверяем наличие сессионных переменных и возвращаем данные для кассы
+@app.route('/cashbox/sales', methods=["GET", "POST"])
+def cashbox_sales():
+    if 'cashbox_status' in session and session['cashbox_status'] == 1:
+        products = [{"id":1, "name":"Staropramen"},{"id":2, "name":"Taller"}]
+        return jsonify({'cashbox_status' : 1, 'cashbox_products' : products})
+    else:
+        return jsonify({'cashbox_status': 0})
+
+# открываем кассу добавляем данные в бд и создаем сессионную переменную которая должна жить и после закрытия браузера
+@app.route('/cashbox/open', methods=["GET", "POST"])
+def cashbox_open():
+    session['cashbox_status'] = 1
+    return jsonify({'status' : 'ok'})
+
+# закрываем кассу
+@app.route('/cashbox/close', methods=["GET", "POST"])
+def cashbox_close():
+    session['cashbox_status'] = 0
+    return jsonify({'status' : 'ok'})
+
+'''
+Общие контроллеры
+'''
+# возвращаем список категорий
+@app.route('/categories', methods=["GET", "POST"])
+def categories():
+    jcat = prepare_category()
+    return jsonify(jcat)
+
+# загрузка списка товаров по id категории
+@app.route('/products', methods=['GET', 'POST'])
+def products():
+    id_category = request.args.get('id')
+    jprod=prepare_product(id_category)
+    return jsonify(jprod)
