@@ -3,6 +3,7 @@ from app import app, db
 from app.models import User, Category, Product
 from .helpers import prepare_category, prepare_product
 
+# сессионные переменные будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
 
 @app.route('/')

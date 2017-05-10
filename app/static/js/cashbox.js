@@ -33,7 +33,7 @@ $(document).ready(function(){
 	$("body").on('click', '#back', function(){
 	    show_categories();
 	});
-
+    // открытие кассы
 	$("#open-cashbox").click(function(e){
 	    e.preventDefault();
 		e.stopPropagation();
@@ -42,7 +42,7 @@ $(document).ready(function(){
             reload();
         });
 	});
-
+    // закрытие кассы
 	$("#close-cashbox").click(function(e){
 	    e.preventDefault();
 		e.stopPropagation();
@@ -69,7 +69,7 @@ $(document).ready(function(){
                 });
 			});
 	}
-
+    //перезагрузка данных на странице
 	function reload(){
 	    // после загрузки страницы отрисовываем группы в блоке
         show_categories();
