@@ -49,7 +49,7 @@ class Product(db.Model):
 class Cashbox(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     open = db.Column(db.DateTime, nullable = False)
-    close = db.Column(db.DateTime)
+    close = db.Column(db.DateTime, nullable = True)
     cash = db.Column(db.Integer, default = 0)
     status = db.Column(db.SmallInteger, default = STATUS_OPEN)
 
@@ -73,9 +73,15 @@ class Receipt(db.Model):
     def __repr__(self):
         return '<Sales %r>' % self.id
 
-# Сводная таблица продаж
-class Sale(db.Model):
-    cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'), nullable = False)
-    receipt_id = db.Column(db.Integer, db.ForeignKey('receipt.id'), nullable = False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = False)
-    quantity = db.Column(db.Integer)
+# # Сводная таблица продаж
+# class Sale(db.Model):
+#     cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'), nullable = False)
+#     receipt_id = db.Column(db.Integer, db.ForeignKey('receipt.id'), nullable = False)
+#     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = False)
+#     quantity = db.Column(db.Integer)
+#
+#     def __init__(self, cashbox_id, receipt_id, product_id, quantity):
+#         self.cashbox_id = cashbox_id
+#         self.receipt_id = receipt_id
+#         self.product_id = product_id
+#         self.quantity = quantity

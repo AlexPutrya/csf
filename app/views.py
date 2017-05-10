@@ -1,7 +1,8 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify, session
 from app import app, db
-from app.models import User, Category, Product
+from app.models import User, Category, Product, Cashbox
 from .helpers import prepare_category, prepare_product
+from datetime import datetime
 
 # сессионные переменные будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
@@ -113,6 +114,9 @@ def cashbox_sales():
 # открываем кассу добавляем данные в бд и создаем сессионную переменную которая должна жить и после закрытия браузера
 @app.route('/cashbox/open', methods=["GET", "POST"])
 def cashbox_open():
+    cashbox = Cashbox(datetime.utcnow())
+    db.session.add(cashbox)
+    db.session.commit()
     session['cashbox_status'] = 1
     return jsonify({'status' : 'ok'})
 
