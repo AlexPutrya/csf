@@ -13,19 +13,21 @@ $(document).ready(function(){
 				id: clickedId[1]
 			};
 			//отправляем запрос id категории и получаем на страницу товары в категории
-			$.getJSON("/products", parametr)
-			.done(function(data, testStatus, jqXHR){
-                //очищаем группы для загрузки товаров
-			    $(".category-box .list-group-item").remove();
-			    // выводим кнопку возврата к категориям
-                $('#back').css('display','block');
-                $.each(data.products,function(key, product){
-                    $(".category-box .list-group").append(
-                    '<a href="#" class="list-group-item" id="product-'+ product.id +'">'+ product.name +'<span class="badge">'+ product.price +' грн.</span></a>'
-                    );
-                });
-
-			});
+			$.ajax({
+                url: '/categories/'+clickedId[1]+'/products',
+                type: "GET",
+                success: function(data){
+                    //очищаем группы для загрузки товаров
+                    $(".category-box .list-group-item").remove();
+                    // выводим кнопку возврата к категориям
+                    $('#back').css('display','block');
+                    $.each(data.products,function(key, product){
+                        $(".category-box .list-group").append(
+                        '<a href="#" class="list-group-item" id="product-'+ product.id +'">'+ product.name +'<span class="badge">'+ product.price +' грн.</span></a>'
+                        );
+                    });
+                }
+            });
 		}
 	});
 
@@ -33,6 +35,7 @@ $(document).ready(function(){
 	$("body").on('click', '#back', function(){
 	    show_categories();
 	});
+
     // открытие кассы
 	$("#open-cashbox").click(function(e){
 	    e.preventDefault();
@@ -42,6 +45,7 @@ $(document).ready(function(){
             reload();
         });
 	});
+
     // закрытие кассы
 	$("#close-cashbox").click(function(e){
 	    e.preventDefault();
@@ -52,13 +56,13 @@ $(document).ready(function(){
         });
 	});
 
-
-
     // делает запрос скрипту и отрисовывает список категорий
 	function show_categories(){
-	    $.getJSON("/categories")
-			.done(function(data, testStatus, jqXHR){
-                //очищаем группы для загрузки товаров
+	    $.ajax({
+	        url: '/categories',
+	        type: 'GET',
+	        success: function(data){
+	            //очищаем группы для загрузки товаров
 			    $(".category-box .list-group-item").remove();
 			    // прячем кнопку возврата к категориям
                 $('#back').css('display','none');
@@ -67,7 +71,8 @@ $(document).ready(function(){
                     '<a href="#" class="list-group-item" id="group-'+ cat.id +'">'+ cat.name +'</a>'
                     );
                 });
-			});
+	        }
+	    });
 	}
     //перезагрузка данных на странице
 	function reload(){

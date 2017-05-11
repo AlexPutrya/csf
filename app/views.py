@@ -8,12 +8,15 @@ from flask_restful import Resource
 from flask_restful import reqparse
 
 
-# сессионные переменные будут жить после закрытия браузера
+# сессионные переменные  в куках будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
 
 # парсинг аргументов запроса
 parser = reqparse.RequestParser()
 parser.add_argument('category_name')
+
+parser.add_argument('product_name')
+parser.add_argument('product_price')
 
 #все категории
 class Categories(Resource):
@@ -22,7 +25,7 @@ class Categories(Resource):
         jcat = prepare_category()
         return jcat
 
-    # добавляем категорию переделать так чтоб не возвращались данные а запрос новых категорий шел с фронтенда
+    # добавляем категорию и возвращаем новые данные
     def post(self):
         args = parser.parse_args()
         cat = Category(args['category_name'])
@@ -42,14 +45,54 @@ class Cat(Resource):
         db.session.commit()
         return 201
 
+    # удаляем категорию
     def delete(self, id_category):
         category = Category.query.filter_by(id=id_category).one()
         db.session.delete(category)
         db.session.commit()
         return 204
 
+
+
+# получаем товары из группы и добавляем товар в группу
+class Products(Resource):
+    #загружаем список товаров
+    def get(self, id_category):
+        jprod = prepare_product(id_category)
+        return jprod
+
+    # добавляем товар в категорию
+    def post(self, id_category):
+        args = parser.parse_args()
+        # создаем новый товар и добавляем в бд
+        product = Product(id_category, args['product_name'], args['product_price'])
+        db.session.add(product)
+        db.session.commit()
+        # получаем обновленный список товаров этой категории и формируем для отправки json
+        jprod = prepare_product(id_category)
+        return jprod
+
+class Prod(Resource):
+    # изменить товар
+    def put(self, id_product):
+        args = parser.parse_args()
+        product = Product.query.filter_by(id=id_product).one()
+        product.name = args['product_name']
+        product.price = args['product_price']
+        db.session.commit()
+        return 201
+
+    def delete(self, id_product):
+        product = Product.query.filter_by(id=id_product).one()
+        db.session.delete(product)
+        db.session.commit()
+        return 204
+
 api.add_resource(Categories, '/categories')
 api.add_resource(Cat, '/categories/<int:id_category>')
+api.add_resource(Products, '/categories/<int:id_category>/products')
+api.add_resource(Prod, '/products/<int:id_product>')
+
 
 @app.route('/')
 def index():
@@ -61,61 +104,12 @@ def login():
         return request.form.get('email')
     return render_template('login.html', title = "Авторизация")
 
-'''
-В дальнейшем сделать рефакторинг с использование Blueprint
-Контроллеры для страницы каталогв
-'''
 # страиница каталога, получаем список категорий и выводим их
 @app.route('/catalog')
 def catalog():
     # получаем названия категорий из базы
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
-
-# # удаление категории
-# @app.route('/category/delete', methods=['GET', 'POST'])
-# def category_delete():
-#     id = request.args.get('category_id')
-#     category = Category.query.filter_by(id=id).one()
-#     db.session.delete(category)
-#     db.session.commit()
-#     return jsonify({'status' : 'ok'})
-
-# создание товара
-@app.route('/product/create', methods=["GET", "POST"])
-def product_create():
-    parametr = request.args
-    category = Category.query.filter_by(id=parametr['category_id']).first()
-    # проверяем есть ли такая категория
-    if not category:
-        return jsonify({'status' : 'error'})
-    else:
-        # создаем новый товар и добавляем в бд
-        product = Product(parametr['category_id'], parametr['product_name'], parametr['product_price'])
-        db.session.add(product)
-        db.session.commit()
-        # получаем обновленный список товаров этой категории и формируем для отправки json
-        jprod = prepare_product(parametr['category_id'])
-        return jsonify(jprod)
-
-# удаление товара
-@app.route('/product/delete', methods=["GET", "POST"])
-def product_delete():
-    id = request.args.get('product_id')
-    product = Product.query.filter_by(id=id).one()
-    db.session.delete(product)
-    db.session.commit()
-    return jsonify({'status' : 'ok'})
-
-# редактирование товара
-@app.route('/product/update', methods=["GET", "POST"])
-def product_update():
-    parametr = request.args
-    product = Product.query.filter_by(id=parametr['product_id']).one()
-    product.name = parametr['product_name']
-    product.price = parametr['product_price']
-    db.session.commit()
-    return jsonify({'status' : 'ok'})
 
 '''
 Все контроллеры которые участвуют в кассе
@@ -149,20 +143,3 @@ def cashbox_close():
     session['cashbox_status'] = 0
     # return jsonify({'status' : 'ok'})
     return [{'status': 'ok'}, {'status': 'ok'}]
-
-
-'''
-Общие контроллеры
-'''
-# # возвращаем список категорий
-# @app.route('/categories', methods=["GET", "POST"])
-# def categories():
-#     jcat = prepare_category()
-#     return jsonify(jcat)
-
-# загрузка списка товаров по id категории
-@app.route('/products', methods=['GET', 'POST'])
-def products():
-    id_category = request.args.get('id')
-    jprod=prepare_product(id_category)
-    return jsonify(jprod)

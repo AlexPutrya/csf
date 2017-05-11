@@ -13,15 +13,14 @@ $(document).ready(function(){
 			$(this).addClass('active');
 			// когда категория выбрана, даем возможность создавать товары
 			$('#product .btn-success').removeClass('disabled');
-
-			var parametr = {
-				id: clickedId[1]
-			};
-			//отправляем запрос id категории и получаем на страницу товары в категории
-			$.getJSON("/products", parametr)
-			.done(function(data, testStatus, jqXHR){
-				refresh_product(data);
-			});
+            // запрашиваем список категорий и отрисовываем их
+            $.ajax({
+                url: '/categories/'+clickedId[1]+'/products',
+                type: "GET",
+                success: function(data){
+                    refresh_product(data);
+                }
+            });
 		}
 	});
 
@@ -75,7 +74,6 @@ $(document).ready(function(){
 							</div>';
 				show_modal(modal_data);
 					// после клика  на "создать" проверяем введенные данные
-				// $("body").on('click', '#modal-create', function(e){
 				$('#modal-create').click(function(e){
 					e.preventDefault();
 					e.stopPropagation();
@@ -88,14 +86,17 @@ $(document).ready(function(){
 					}else{
 						parametr = {
 							product_name : product_name,
-							product_price : product_price,
-							category_id : active_category[1]
+							product_price : product_price
 						}
 						// формируем и отправляем запрос AJAX на создание товара в бд
-						$.getJSON("product/create", parametr)
-						.done(function(data, testStatus, jqXNR){
-							close_modal();
-							refresh_product(data);
+						$.ajax({
+						    url: 'categories/'+active_category[1]+'/products',
+						    type: "POST",
+						    data: parametr,
+						    success: function(data){
+						        close_modal();
+							    refresh_product(data);
+						    }
 						});
 					}
 				});
@@ -111,12 +112,13 @@ $(document).ready(function(){
 		if(clickedId[1] == "group"){
 			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split('\n');
 			var replace_text = prompt("Измените название", text_parts[0].trim()).trim();
+			var id_category = clickedId[2]
 			if(replace_text != "" && replace_text != null){
 				parametr = {
 					category_name: replace_text
 				}
 				$.ajax({
-                    url: '/categories/'+clickedId[2],
+                    url: '/categories/'+id_category,
                     type: 'PUT',
                     data: parametr,
                     success: function(data){
@@ -129,6 +131,7 @@ $(document).ready(function(){
                     }
 				});
 			}
+        //редактируем товар
 		}else if(clickedId[1] == "product"){
 			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split(' ');
 			modal_data ='<div class="form-group">\
@@ -149,27 +152,29 @@ $(document).ready(function(){
   				e.stopPropagation();
   				var product_name = $("#product-name").val();
 				var product_price = $("#product-price").val();
-				var product_id = clickedId[2];
+				var id_product = clickedId[2];
 				if(product_name == '' || product_price == ''){
 					return false;
 				}else{
 					parametr = {
 						product_name : product_name,
 						product_price : product_price,
-						product_id : product_id
 					}
 					// формируем и отправляем запрос AJAX на редактирвоание товара
-					$.getJSON("product/update", parametr)
-					.done(function(data, testStatus, jqXNR){
-						close_modal();
-						if(data['status'] == 'ok'){
-							$('#'+ clickedId[1] + '-' + clickedId[2]).html(product_name +'<span class=" price"> | ' + product_price + ' грн</span>\
+					$.ajax({
+					    url: '/products/'+id_product,
+					    type: 'PUT',
+					    data: parametr,
+					    success: function(data){
+					        close_modal();
+					        $('#'+ clickedId[1] + '-' + clickedId[2]).html(product_name +'<span class=" price"> | ' + product_price + ' грн</span>\
 								<div class="btn-group pull-right">\
 								<button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button>\
 								<button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button>\
 								</div>'
 							);
-						}
+					    }
+
 					});
 				}
   			});
@@ -183,11 +188,12 @@ $(document).ready(function(){
 		e.stopPropagation();
 		var clickedId = this.id.split("-");
 		if(confirm("Вы точно хотите удалить элемент?")){
+		    var id_category = clickedId[2]
 			// Удаление группы 
 			if(clickedId[1] == "group"){
 				// отправляем скрипту id категории которую нужно удалить, убираем из DOM категорию
 				$.ajax({
-                    url: '/categories/'+clickedId[2],
+                    url: '/categories/'+id_category,
                     type: 'DELETE',
                     success: function(data){
                         $("#" + clickedId[1] +"-"+clickedId[2]).hide('slow', function(){
@@ -197,19 +203,17 @@ $(document).ready(function(){
 				});
 			// Удаление товара
 			}else if(clickedId[1] == "product"){
-				parametr = {
-					product_id : clickedId[2]
-				}
+			    var id_product = clickedId[2]
 				// отправляем скрипту id товара который нужно удалить, убираем из DOM товар
-				$.getJSON("/product/delete", parametr)
-				.done(function(data, testStatus,jqXNR){
-					if (data['status'] == 'ok'){
-						$("#" + clickedId[1] +"-"+clickedId[2]).hide('slow', function(){
+                $.ajax({
+                    url: '/products/'+id_product,
+                    type: 'DELETE',
+                    success: function(){
+                        $("#" + clickedId[1] +"-"+clickedId[2]).hide('slow', function(){
 							$("#" + clickedId[1] +"-"+clickedId[2]).remove();
 						});
-					}
-					
-				});
+                    }
+                });
 			}
 			
 		}
