@@ -75,13 +75,11 @@ class Receipt(db.Model):
 
 # # Сводная таблица продаж
 # class Sale(db.Model):
-#     cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'), nullable = False)
 #     receipt_id = db.Column(db.Integer, db.ForeignKey('receipt.id'), nullable = False)
 #     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = False)
 #     quantity = db.Column(db.Integer)
 #
-#     def __init__(self, cashbox_id, receipt_id, product_id, quantity):
-#         self.cashbox_id = cashbox_id
+#     def __init__(self, receipt_id, product_id, quantity):
 #         self.receipt_id = receipt_id
 #         self.product_id = product_id
 #         self.quantity = quantity
