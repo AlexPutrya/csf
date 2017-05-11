@@ -3,9 +3,53 @@ from app import app, db
 from app.models import User, Category, Product, Cashbox
 from .helpers import prepare_category, prepare_product
 from datetime import datetime
+from app import api
+from flask_restful import Resource
+from flask_restful import reqparse
+
 
 # сессионные переменные будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
+
+# парсинг аргументов запроса
+parser = reqparse.RequestParser()
+parser.add_argument('category_name')
+
+#все категории
+class Categories(Resource):
+    # получаем список категорий
+    def get(self):
+        jcat = prepare_category()
+        return jcat
+
+    # добавляем категорию переделать так чтоб не возвращались данные а запрос новых категорий шел с фронтенда
+    def post(self):
+        args = parser.parse_args()
+        cat = Category(args['category_name'])
+        db.session.add(cat)
+        db.session.commit()
+        jcat = prepare_category()
+        return jcat
+
+# Отдельная категория
+class Cat(Resource):
+    # редактируем категорию
+    def put(self, id_category):
+        args = parser.parse_args()
+        cat_name = args['category_name']
+        cat = Category.query.filter_by(id=id_category).one()
+        cat.name = cat_name
+        db.session.commit()
+        return 201
+
+    def delete(self, id_category):
+        category = Category.query.filter_by(id=id_category).one()
+        db.session.delete(category)
+        db.session.commit()
+        return 204
+
+api.add_resource(Categories, '/categories')
+api.add_resource(Cat, '/categories/<int:id_category>')
 
 @app.route('/')
 def index():
@@ -28,35 +72,14 @@ def catalog():
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
 
-# создание новой категории товаров и возврат нового списка категорий
-@app.route('/category/create', methods=['GET', 'POST'])
-def category_create():
-    # если отправлен запрос с именем категории добавить в бд
-    if request.args.get('category_name'):
-        cat = Category(request.args.get('category_name'))
-        db.session.add(cat)
-        db.session.commit()
-    jcat = prepare_category()
-    return jsonify(jcat)
-
-# удаление категории
-@app.route('/category/delete', methods=['GET', 'POST'])
-def category_delete():
-    id = request.args.get('category_id')
-    category = Category.query.filter_by(id=id).one()
-    db.session.delete(category)
-    db.session.commit()
-    return jsonify({'status' : 'ok'})
-
-# редактирование категории
-@app.route('/category/update', methods=['GET', 'POST'])
-def category_update():
-    id = request.args.get('category_id')
-    cat_name = request.args.get('cat_name')
-    cat = Category.query.filter_by(id=id).one()
-    cat.name = cat_name
-    db.session.commit()
-    return jsonify({'status' : 'ok'})
+# # удаление категории
+# @app.route('/category/delete', methods=['GET', 'POST'])
+# def category_delete():
+#     id = request.args.get('category_id')
+#     category = Category.query.filter_by(id=id).one()
+#     db.session.delete(category)
+#     db.session.commit()
+#     return jsonify({'status' : 'ok'})
 
 # создание товара
 @app.route('/product/create', methods=["GET", "POST"])
@@ -124,16 +147,18 @@ def cashbox_open():
 @app.route('/cashbox/close', methods=["GET", "POST"])
 def cashbox_close():
     session['cashbox_status'] = 0
-    return jsonify({'status' : 'ok'})
+    # return jsonify({'status' : 'ok'})
+    return [{'status': 'ok'}, {'status': 'ok'}]
+
 
 '''
 Общие контроллеры
 '''
-# возвращаем список категорий
-@app.route('/categories', methods=["GET", "POST"])
-def categories():
-    jcat = prepare_category()
-    return jsonify(jcat)
+# # возвращаем список категорий
+# @app.route('/categories', methods=["GET", "POST"])
+# def categories():
+#     jcat = prepare_category()
+#     return jsonify(jcat)
 
 # загрузка списка товаров по id категории
 @app.route('/products', methods=['GET', 'POST'])

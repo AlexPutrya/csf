@@ -4,3 +4,4 @@ Flask-SQLAlchemy==2.2
 Flask-WTF==0.14
 WTForms==2.1
 Passlib==1.6.5
+Flask-RESTful
