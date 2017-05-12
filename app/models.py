@@ -37,6 +37,9 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Integer, nullable=False)
 
+    sale = db.relationship('Sale', backref='products')
+
+
     def __init__(self, id_category, name, price):
         self.id_category = id_category
         self.name = name
@@ -44,6 +47,33 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Product %r>' % self.name
+
+# Продажи
+class Sale(db.Model):
+    id = db.Column('id', db.Integer, primary_key=True)
+    receipt_id = db.Column(db.Integer, db.ForeignKey('receipt.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    quantity = db.Column(db.Integer)
+
+    product = db.relationship('Product', backref='sales')
+    receipt = db.relationship('Receipt', backref='sales')
+
+
+# Чеки кассовой смены
+class Receipt(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    time = db.Column(db.DateTime, nullable = False)
+    cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'), nullable = False)
+    status = db.Column(db.SmallInteger, default = STATUS_OPEN)
+
+    sale = db.relationship('Sale', backref = 'receipts')
+
+    def __init__(self, time, cashbox_id):
+        self.time  = time
+        self.cashbox_id = cashbox_id
+
+    def __repr__(self):
+        return '<Sales %r>' % self.id
 
 # Кссовая смена
 class Cashbox(db.Model):
@@ -58,28 +88,3 @@ class Cashbox(db.Model):
 
     def __repr__(self):
         return '<Cashbox %r>' % self.id
-
-# Чеки кассовой смены
-class Receipt(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    time = db.Column(db.DateTime, nullable = False)
-    cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'), nullable = False)
-    status = db.Column(db.SmallInteger, default = STATUS_OPEN)
-
-    def __init__(self, time, cashbox_id):
-        self.time  = time
-        self.cashbox_id = cashbox_id
-
-    def __repr__(self):
-        return '<Sales %r>' % self.id
-
-# # Сводная таблица продаж
-# class Sale(db.Model):
-#     receipt_id = db.Column(db.Integer, db.ForeignKey('receipt.id'), nullable = False)
-#     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = False)
-#     quantity = db.Column(db.Integer)
-#
-#     def __init__(self, receipt_id, product_id, quantity):
-#         self.receipt_id = receipt_id
-#         self.product_id = product_id
-#         self.quantity = quantity
