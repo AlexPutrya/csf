@@ -78,19 +78,40 @@ $(document).ready(function(){
 	function reload(){
 	    // после загрузки страницы отрисовываем группы в блоке
         show_categories();
-        $.getJSON("/cashbox/sales")
-        .done(function(data, testStatus, jqXHR){
-            //	касса закрыта и она пустая без элементов
-            if (data.cashbox_status == 0){
-                $("#commit-check").addClass("disabled");
-                $("#close-cashbox").addClass("disabled");
-                $("#open-cashbox").removeClass("disabled");
-            //	касса открыта
-            }else if(data.cashbox_status == 1){
-                $("#commit-check").removeClass("disabled");
-                $("#close-cashbox").removeClass("disabled");
-                $("#open-cashbox").addClass("disabled");
+        $.ajax({
+            url: '/receipt',
+            type: "GET",
+            success: function(data){
+                //	касса закрыта и она пустая без элементов
+                if (data.cashbox_status == 0){
+                    $("#commit-check").addClass("disabled");
+                    $("#close-cashbox").addClass("disabled");
+                    $("#open-cashbox").removeClass("disabled");
+                //	касса открыта
+                }else if(data.cashbox_status == 1){
+                    $('.product').remove();
+                    $.each(data.receipt_products,function(key, product){
+                        $("#product-list").append(
+                            '<div class="row product">\
+                                <div class="col-md-1">'+product.number+'</div>\
+                                <div class="col-md-5">'+product.name+'</div>\
+                                <div class="col-md-2">'+product.quantity+'шт</div>\
+                                <div class="col-md-2">'+product.price+' грн</div>\
+                                <div class="col-md-2">'+product.summa+' грн</div>\
+                            </div>\
+                        ');
+                    });
+                    $('#product-list').append(
+                    '<div class="row product">\
+							<div class="col-md-2 col-md-offset-8">Сумма чека:</div>\
+							<div class="col-md-2">'+data.receipt_summ+' грн</div>\
+						</div>\
+                    ');
+                    $("#commit-check").removeClass("disabled");
+                    $("#close-cashbox").removeClass("disabled");
+                    $("#open-cashbox").addClass("disabled");
+                }
             }
-	    });
+        });
 	}
 });

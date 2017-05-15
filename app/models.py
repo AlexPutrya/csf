@@ -53,7 +53,8 @@ class Sale(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     receipt_id = db.Column(db.Integer, db.ForeignKey('receipt.id'))
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
-    quantity = db.Column(db.Integer)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
 
     product = db.relationship('Product', backref='sales')
     receipt = db.relationship('Receipt', backref='sales')

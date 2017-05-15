@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify, session
 from app import app, db
-from app.models import User, Category, Product, Cashbox
+from app.models import User, Category, Product, Cashbox, Receipt, Sale
 from .helpers import prepare_category, prepare_product
 from datetime import datetime
 from app import api
@@ -35,7 +35,7 @@ class Categories(Resource):
         return jcat
 
 # Отдельная категория
-class Cat(Resource):
+class CategoryAction(Resource):
     # редактируем категорию
     def put(self, id_category):
         args = parser.parse_args()
@@ -72,7 +72,8 @@ class Products(Resource):
         jprod = prepare_product(id_category)
         return jprod
 
-class Prod(Resource):
+# Изменяем и удаляем товар
+class ProductAction(Resource):
     # изменить товар
     def put(self, id_product):
         args = parser.parse_args()
@@ -88,11 +89,31 @@ class Prod(Resource):
         db.session.commit()
         return 204
 
-api.add_resource(Categories, '/categories')
-api.add_resource(Cat, '/categories/<int:id_category>')
-api.add_resource(Products, '/categories/<int:id_category>/products')
-api.add_resource(Prod, '/products/<int:id_product>')
+class ReceiptList(Resource):
 
+    def get(self):
+        products=[]
+        number =0
+        receipt_summ = 0
+        if 'cashbox_status' in session and session['cashbox_status'] == 1:
+            sales = Sale.query.filter_by(receipt_id=session['receipt_id'])
+            for sale in sales:
+                number +=1
+                receipt_summ += sale.price*sale.quantity
+                products.append({'number':number, 'name': sale.product.name, 'product_id':sale.product.id,'quantity':sale.quantity, 'price': sale.price, 'summa': sale.price*sale.quantity})
+            # products = [{"id": 1, "name": "Staropramen"}, {"id": 2, "name": "Taller"}]
+            return {'cashbox_status': 1, 'receipt_products': products, 'receipt_summ': receipt_summ}
+        else:
+            return jsonify({'cashbox_status': 0})
+
+# class ReceiptAction(Resource):
+#
+
+api.add_resource(Categories, '/categories')
+api.add_resource(CategoryAction, '/categories/<int:id_category>')
+api.add_resource(Products, '/categories/<int:id_category>/products')
+api.add_resource(ProductAction, '/products/<int:id_product>')
+api.add_resource(ReceiptList, '/receipt')
 
 @app.route('/')
 def index():
@@ -120,21 +141,22 @@ def cashbox():
     return render_template('cashbox.html')
 
 # проверяем наличие сессионных переменных и возвращаем данные для кассы
-@app.route('/cashbox/sales', methods=["GET", "POST"])
-def cashbox_sales():
-    if 'cashbox_status' in session and session['cashbox_status'] == 1:
-        products = [{"id":1, "name":"Staropramen"},{"id":2, "name":"Taller"}]
-        return jsonify({'cashbox_status' : 1, 'cashbox_products' : products})
-    else:
-        return jsonify({'cashbox_status': 0})
+# @app.route('/cashbox/sales', methods=["GET", "POST"])
+# def cashbox_sales():
+#     if 'cashbox_status' in session and session['cashbox_status'] == 1:
+#         products = [{"id":1, "name":"Staropramen"},{"id":2, "name":"Taller"}]
+#         return jsonify({'cashbox_status' : 1, 'cashbox_products' : products})
+#     else:
+#         return jsonify({'cashbox_status': 0})
 
 # открываем кассу добавляем данные в бд и создаем сессионную переменную которая должна жить и после закрытия браузера
 @app.route('/cashbox/open', methods=["GET", "POST"])
 def cashbox_open():
-    cashbox = Cashbox(datetime.utcnow())
-    db.session.add(cashbox)
-    db.session.commit()
+    # cashbox = Cashbox(datetime.utcnow())
+    # db.session.add(cashbox)
+    # db.session.commit()
     session['cashbox_status'] = 1
+    session['receipt_id'] = 1
     return jsonify({'status' : 'ok'})
 
 # закрываем кассу
