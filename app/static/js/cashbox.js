@@ -53,10 +53,13 @@ $(document).ready(function(){
 	$("#close-cashbox").on('click', function(e){
 	    e.preventDefault();
 		e.stopPropagation();
-	    $.getJSON("/cashbox/close")
-		.done(function(data, testStatus, jqXHR){
-            reload();
-        });
+		$.ajax({
+		    url: '/cashbox/status',
+		    type: 'PUT',
+		    success: function(){
+		        reload();
+		    }
+		});
 	});
 
     // делает запрос скрипту и отрисовывает список категорий

@@ -97,7 +97,6 @@ class Receipts(Resource):
         products=[]
         number =0
         receipt_summ = 0
-        # если существует переменная проверить статус кассы
         if 'id_cashbox' in session:
             # если в сессионной переменной нет id чека то мы создаем новый чек
             if not ('id_receipt' in session):
@@ -145,10 +144,16 @@ class CashboxStatus(Resource):
         session['id_receipt'] = receipt.id
         return 204
 
-    # закрыть кассовую смену
+    # закрыть кассовую смену, если в это время есть открытый кассовый чек то мы его удаляем
     def put(self):
-        pass
-
+        cashbox = Cashbox.query.filter_by(id=session['id_cashbox']).one()
+        cashbox.status = 0
+        receipt = Receipt.query.filter_by(id=session['id_receipt']).one()
+        if receipt.status == 1:
+            db.session.delete(receipt)
+        db.session.commit()
+        del session['id_cashbox'], session['id_receipt']
+        return 204
 
 api.add_resource(Categories, '/categories')
 api.add_resource(CategoryAction, '/categories/<int:id_category>')
@@ -175,35 +180,7 @@ def catalog():
     groups = Category.query.all()
     return render_template('catalog.html', groups = groups)
 
-'''
-Все контроллеры которые участвуют в кассе
-'''
 # общая страница с кассой
 @app.route('/cashbox', methods=["GET", "POST"])
 def cashbox():
     return render_template('cashbox.html')
-
-# проверяем наличие сессионных переменных и возвращаем данные для кассы
-# @app.route('/cashbox/sales', methods=["GET", "POST"])
-# def cashbox_sales():
-#     if 'cashbox_status' in session and session['cashbox_status'] == 1:
-#         products = [{"id":1, "name":"Staropramen"},{"id":2, "name":"Taller"}]
-#         return jsonify({'cashbox_status' : 1, 'cashbox_products' : products})
-#     else:
-#         return jsonify({'cashbox_status': 0})
-
-# # открываем кассу добавляем данные в бд и создаем сессионную переменную которая должна жить и после закрытия браузера
-# @app.route('/cashbox/open', methods=["GET", "POST"])
-# def cashbox_open():
-#     # cashbox = Cashbox(datetime.utcnow())
-#     # db.session.add(cashbox)
-#     # db.session.commit()
-#     session['cashbox_status'] = 1
-#     session['receipt_id'] = 1
-#     return jsonify({'status' : 'ok'})
-
-# закрываем кассу
-@app.route('/cashbox/close', methods=["GET", "POST"])
-def cashbox_close():
-    del(session['id_receipt'])
-    return jsonify({'status' : 'ok'})
