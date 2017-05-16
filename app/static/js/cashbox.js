@@ -1,11 +1,14 @@
 $(document).ready(function(){
 
     reload();
+    // после загрузки страницы отрисовываем группы в блоке
+//    show_categories();
 
     // Загрузка списка товаров в группе
 	$("body").on('click', '.list-group-item', function(e){
 		//отменяем стандартное действие
 		e.preventDefault();
+		e.stopPropagation();
 		var clickedId = this.id.split('-');
 		//проверяем чтоб нажатие было на группу
 		if(clickedId[0] == 'group'){
@@ -28,6 +31,16 @@ $(document).ready(function(){
                     });
                 }
             });
+		}else if(clickedId[0] == 'product'){
+		    var id_receipt = $("#receipt_number").text();
+		    var quantity = prompt("Количество", '>1');
+		    $.ajax({
+		        url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
+		        type: "POST",
+		        success: function(){
+		            reload();
+		        }
+		    });
 		}
 	});
 
@@ -45,6 +58,7 @@ $(document).ready(function(){
 		    type: 'POST',
 		    success: function(){
 		        reload();
+		        show_categories();
 		    }
 		});
 	});
@@ -58,6 +72,7 @@ $(document).ready(function(){
 		    type: 'PUT',
 		    success: function(){
 		        reload();
+		        $("#receipt_id h4").remove();
 		    }
 		});
 	});
@@ -82,8 +97,6 @@ $(document).ready(function(){
 	}
     //перезагрузка данных на странице
 	function reload(){
-	    // после загрузки страницы отрисовываем группы в блоке
-        show_categories();
         $.ajax({
             url: '/receipt',
             type: "GET",
@@ -93,8 +106,15 @@ $(document).ready(function(){
                     $("#commit-check").addClass("disabled");
                     $("#close-cashbox").addClass("disabled");
                     $("#open-cashbox").removeClass("disabled");
+                    $(".category-box .list-group-item").remove();
+                    // очищаем список чека и список категорий и групп
+                    $('.product').remove();
+                    $(".category-box .list-group-item").remove();
+                    $('#back').css('display','none');
+
                 //	касса открыта
                 }else if(data.cashbox_status == 1){
+                    //очищаем список позиций чека и загружем новые данные если они есть
                     $('.product').remove();
                     $.each(data.receipt_products,function(key, product){
                         $("#product-list").append(
@@ -107,6 +127,7 @@ $(document).ready(function(){
                             </div>\
                         ');
                     });
+                    //выводим сумму чека, общую сумму кассы
                     $('#product-list').append(
                     '<div class="row product">\
 							<div class="col-md-2 col-md-offset-8">Сумма чека:</div>\
@@ -114,6 +135,9 @@ $(document).ready(function(){
 						</div>\
                     ');
                     $("#cash").text(data.cash+' грн');
+                    // удаляем и выводим новый заголовок с id чека, и делаем кнопки правильного статуса
+                    $("#receipt_id h4").remove();
+                    $("#receipt_id").append('<h4>Чек № <span id="receipt_number">'+data.id_receipt+'</span></h4>');
                     $("#commit-check").removeClass("disabled");
                     $("#close-cashbox").removeClass("disabled");
                     $("#open-cashbox").addClass("disabled");

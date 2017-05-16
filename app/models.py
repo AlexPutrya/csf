@@ -59,7 +59,6 @@ class Sale(db.Model):
     product = db.relationship('Product', backref='sales')
     receipt = db.relationship('Receipt', backref='sales')
 
-
 # Чеки кассовой смены
 class Receipt(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -67,7 +66,7 @@ class Receipt(db.Model):
     cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'))
     status = db.Column(db.SmallInteger, default = STATUS_OPEN)
 
-    sale = db.relationship('Sale', backref = 'receipts')
+    sale = db.relationship('Sale', backref = 'receipts', cascade="all, delete-orphan")
 
     # def __init__(self, time):
     #     self.time  = time

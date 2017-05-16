@@ -111,7 +111,7 @@ class Receipts(Resource):
                     number +=1
                     receipt_summ += sale.price*sale.quantity
                     products.append({'number':number, 'name': sale.product.name, 'product_id':sale.product.id,'quantity':sale.quantity, 'price': sale.price, 'summa': sale.price*sale.quantity})
-                return {'cashbox_status': cashbox.status, 'receipt_products': products, 'receipt_summ': receipt_summ, 'cash': cashbox.cash}
+                return {'cashbox_status': cashbox.status, 'receipt_products': products, 'receipt_summ': receipt_summ, 'cash': cashbox.cash, 'id_receipt' : session['id_receipt']}
 
         return {'cashbox_status': 0}
 
@@ -121,15 +121,28 @@ class Receipts(Resource):
 
 class ReceiptAction(Resource):
     # добавить товар
-    def post(self, id_receipt, id_product):
-        pass
+    def post(self, id_receipt, id_product, quantity):
+        receipt = Receipt.query.filter_by(id=id_receipt).one()
+        product = Product.query.filter_by(id=id_product).one()
+        # проверяем наличие товара в чеке если он есть просто увеличиваем количество
+        in_receipt = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
+        if in_receipt:
+            in_receipt.quantity += quantity
+            db.session.add(in_receipt)
+        else:
+            new_sale = Sale(quantity=quantity, price=product.price)
+            new_sale.product = product
+            receipt.sale.append(new_sale)
+            db.session.add(receipt)
+        db.session.commit()
+        return 204
 
-    # удалить товар из чека
+    # удалить товар из чека/НУЖНО ВЫНЕСТИ В ОДДЕЛЬНЫЙ КЛАСС НЕ БУДЕТ ПРОХОДИТЬ ПО РОУТИНГУ
     def delete(self, id_receipt, id_product):
         pass
 
     # изменить количество в чеке
-    def put(self, id_receipt, id_product):
+    def put(self, id_receipt, id_product, quantity):
         pass
 
 class CashboxStatus(Resource):
@@ -137,7 +150,7 @@ class CashboxStatus(Resource):
     def post(self):
         cashbox = Cashbox(datetime.utcnow())
         receipt = Receipt(time=datetime.utcnow())
-        cashbox.receipts = [receipt]
+        cashbox.receipts.append(receipt)
         db.session.add(cashbox)
         db.session.commit()
         session['id_cashbox'] = cashbox.id
@@ -151,6 +164,9 @@ class CashboxStatus(Resource):
         receipt = Receipt.query.filter_by(id=session['id_receipt']).one()
         if receipt.status == 1:
             db.session.delete(receipt)
+            # удаляем так же все продажи в этом чеке
+            for sale in receipt.sale:
+                db.session.delete(sale)
         db.session.commit()
         del session['id_cashbox'], session['id_receipt']
         return 204
@@ -160,7 +176,7 @@ api.add_resource(CategoryAction, '/categories/<int:id_category>')
 api.add_resource(Products, '/categories/<int:id_category>/products')
 api.add_resource(ProductAction, '/products/<int:id_product>')
 api.add_resource(Receipts, '/receipt')
-api.add_resource(ReceiptAction, '/receipt/<int:id_receipt>/product/<int:id_product>')
+api.add_resource(ReceiptAction, '/receipt/<int:id_receipt>/product/<int:id_product>/quantity/<int:quantity>')
 api.add_resource(CashboxStatus, '/cashbox/status')
 
 @app.route('/')

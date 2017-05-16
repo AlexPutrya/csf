@@ -26,6 +26,9 @@
 							<a href="#" class="btn btn-default" id="close-cashbox"><span class="glyphicon glyphicon-check"></span> Закрыть смену</a>
 						</div>
 					</div>
+					<div class="row" id="receipt_id">
+						<!--номер чека-->
+					</div>
 					<!--ряд заголовка корзины-->
 					<div class="row" id='product-title'>
 						<div class="col-md-1">№</div>
@@ -37,13 +40,8 @@
 					<!--блок для списка продкутов-->
 					<div id='product-list'>
 						<!--ряд елемента корзины-->
-						<div class="row product">
-							<div class="col-md-1">1</div>
-							<div class="col-md-5">Пиво Staropramen</div>
-							<div class="col-md-2">25шт</div>
-							<div class="col-md-2">128 грн</div>
-							<div class="col-md-2">1000грн</div>
-						</div>
+						<!--добавляется через JS-->
+						<!--					-->
 						<!--ряд с суммой чека-->
 						<div class="row product">
 							<div class="col-md-2 col-md-offset-8">Сумма чека:</div>
@@ -54,7 +52,7 @@
 					<div class="row" id="footer-toolbar">
 						<div class="col-md-2">
 							<p>Деньги в кассе: <br>
-							<span id="cash">1000 грн</span>
+							<span id="cash"></span>
 							</p>
 						</div>
 						<div class="col-md-2 col-md-offset-8">
