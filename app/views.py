@@ -83,37 +83,80 @@ class ProductAction(Resource):
         db.session.commit()
         return 201
 
+    # удаляем товар
     def delete(self, id_product):
         product = Product.query.filter_by(id=id_product).one()
         db.session.delete(product)
         db.session.commit()
         return 204
 
-class ReceiptList(Resource):
-
+# Работа с чеком получаем данные, и пробиваем чек
+class Receipts(Resource):
+    # получить и сформировать чек кассовой смены
     def get(self):
         products=[]
         number =0
         receipt_summ = 0
-        if 'cashbox_status' in session and session['cashbox_status'] == 1:
-            sales = Sale.query.filter_by(receipt_id=session['receipt_id'])
-            for sale in sales:
-                number +=1
-                receipt_summ += sale.price*sale.quantity
-                products.append({'number':number, 'name': sale.product.name, 'product_id':sale.product.id,'quantity':sale.quantity, 'price': sale.price, 'summa': sale.price*sale.quantity})
-            # products = [{"id": 1, "name": "Staropramen"}, {"id": 2, "name": "Taller"}]
-            return {'cashbox_status': 1, 'receipt_products': products, 'receipt_summ': receipt_summ}
-        else:
-            return jsonify({'cashbox_status': 0})
+        # если существует переменная проверить статус кассы
+        if 'id_cashbox' in session:
+            # если в сессионной переменной нет id чека то мы создаем новый чек
+            if not ('id_receipt' in session):
+                receipt = Receipt(time=datetime.utcnow(), cashbox_id=session['id_cashbox'])
+                db.session.add(receipt)
+                db.session.commit()
+                session['id_receipt'] = receipt.id
+            cashbox = Cashbox.query.filter_by(id=session['id_cashbox']).one()
+            if cashbox.status == 1:
+                sales = Sale.query.filter_by(receipt_id=session['id_receipt'])
+                for sale in sales:
+                    number +=1
+                    receipt_summ += sale.price*sale.quantity
+                    products.append({'number':number, 'name': sale.product.name, 'product_id':sale.product.id,'quantity':sale.quantity, 'price': sale.price, 'summa': sale.price*sale.quantity})
+                return {'cashbox_status': cashbox.status, 'receipt_products': products, 'receipt_summ': receipt_summ, 'cash': cashbox.cash}
 
-# class ReceiptAction(Resource):
-#
+        return {'cashbox_status': 0}
+
+    # Пробиваем чек
+    def put(self):
+        pass
+
+class ReceiptAction(Resource):
+    # добавить товар
+    def post(self, id_receipt, id_product):
+        pass
+
+    # удалить товар из чека
+    def delete(self, id_receipt, id_product):
+        pass
+
+    # изменить количество в чеке
+    def put(self, id_receipt, id_product):
+        pass
+
+class CashboxStatus(Resource):
+    # открыть кассовую смену
+    def post(self):
+        cashbox = Cashbox(datetime.utcnow())
+        receipt = Receipt(time=datetime.utcnow())
+        cashbox.receipts = [receipt]
+        db.session.add(cashbox)
+        db.session.commit()
+        session['id_cashbox'] = cashbox.id
+        session['id_receipt'] = receipt.id
+        return 204
+
+    # закрыть кассовую смену
+    def put(self):
+        pass
+
 
 api.add_resource(Categories, '/categories')
 api.add_resource(CategoryAction, '/categories/<int:id_category>')
 api.add_resource(Products, '/categories/<int:id_category>/products')
 api.add_resource(ProductAction, '/products/<int:id_product>')
-api.add_resource(ReceiptList, '/receipt')
+api.add_resource(Receipts, '/receipt')
+api.add_resource(ReceiptAction, '/receipt/<int:id_receipt>/product/<int:id_product>')
+api.add_resource(CashboxStatus, '/cashbox/status')
 
 @app.route('/')
 def index():
@@ -149,19 +192,18 @@ def cashbox():
 #     else:
 #         return jsonify({'cashbox_status': 0})
 
-# открываем кассу добавляем данные в бд и создаем сессионную переменную которая должна жить и после закрытия браузера
-@app.route('/cashbox/open', methods=["GET", "POST"])
-def cashbox_open():
-    # cashbox = Cashbox(datetime.utcnow())
-    # db.session.add(cashbox)
-    # db.session.commit()
-    session['cashbox_status'] = 1
-    session['receipt_id'] = 1
-    return jsonify({'status' : 'ok'})
+# # открываем кассу добавляем данные в бд и создаем сессионную переменную которая должна жить и после закрытия браузера
+# @app.route('/cashbox/open', methods=["GET", "POST"])
+# def cashbox_open():
+#     # cashbox = Cashbox(datetime.utcnow())
+#     # db.session.add(cashbox)
+#     # db.session.commit()
+#     session['cashbox_status'] = 1
+#     session['receipt_id'] = 1
+#     return jsonify({'status' : 'ok'})
 
 # закрываем кассу
 @app.route('/cashbox/close', methods=["GET", "POST"])
 def cashbox_close():
-    session['cashbox_status'] = 0
-    # return jsonify({'status' : 'ok'})
-    return [{'status': 'ok'}, {'status': 'ok'}]
+    del(session['id_receipt'])
+    return jsonify({'status' : 'ok'})

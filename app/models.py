@@ -64,14 +64,13 @@ class Sale(db.Model):
 class Receipt(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     time = db.Column(db.DateTime, nullable = False)
-    cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'), nullable = False)
+    cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'))
     status = db.Column(db.SmallInteger, default = STATUS_OPEN)
 
     sale = db.relationship('Sale', backref = 'receipts')
 
-    def __init__(self, time, cashbox_id):
-        self.time  = time
-        self.cashbox_id = cashbox_id
+    # def __init__(self, time):
+    #     self.time  = time
 
     def __repr__(self):
         return '<Sales %r>' % self.id
@@ -83,6 +82,8 @@ class Cashbox(db.Model):
     close = db.Column(db.DateTime, nullable = True)
     cash = db.Column(db.Integer, default = 0)
     status = db.Column(db.SmallInteger, default = STATUS_OPEN)
+
+    receipts = db.relationship('Receipt', backref='rec', lazy='dynamic')
 
     def __init__(self, open_timestamp):
         self.open = open_timestamp

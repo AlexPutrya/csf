@@ -37,17 +37,20 @@ $(document).ready(function(){
 	});
 
     // открытие кассы
-	$("#open-cashbox").click(function(e){
+    $("#open-cashbox").on('click',function(e){
 	    e.preventDefault();
 		e.stopPropagation();
-	    $.getJSON("/cashbox/open")
-		.done(function(data, testStatus, jqXHR){
-            reload();
-        });
+		$.ajax({
+		    url: '/cashbox/status',
+		    type: 'POST',
+		    success: function(){
+		        reload();
+		    }
+		});
 	});
 
     // закрытие кассы
-	$("#close-cashbox").click(function(e){
+	$("#close-cashbox").on('click', function(e){
 	    e.preventDefault();
 		e.stopPropagation();
 	    $.getJSON("/cashbox/close")
@@ -107,6 +110,7 @@ $(document).ready(function(){
 							<div class="col-md-2">'+data.receipt_summ+' грн</div>\
 						</div>\
                     ');
+                    $("#cash").text(data.cash+' грн');
                     $("#commit-check").removeClass("disabled");
                     $("#close-cashbox").removeClass("disabled");
                     $("#open-cashbox").addClass("disabled");
