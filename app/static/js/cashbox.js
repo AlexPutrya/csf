@@ -34,19 +34,46 @@ $(document).ready(function(){
 		}else if(clickedId[0] == 'product'){
 		    var id_receipt = $("#receipt_number").text();
 		    var quantity = prompt("Количество", '>1');
-		    $.ajax({
-		        url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
-		        type: "POST",
-		        success: function(){
-		            reload();
-		        }
-		    });
+            $.ajax({
+                url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
+                type: "POST",
+                success: function(){
+                    reload();
+                }
+            });
 		}
 	});
 
-    // при нажатии назад возвращает список категорий
-	$("body").on('click', '#back', function(){
-	    show_categories();
+	// изменяем количество штук товара
+	$('body').on('click', '.edit-count', function(e){
+	    e.preventDefault();
+	    e.stopPropagation();
+	    var clickedId = this.id;
+	    var quantity = prompt("Количество", '>1');
+	    var id_receipt = $("#receipt_number").text();
+	    if (quantity > 0){
+            $.ajax({
+                url: '/receipt/'+id_receipt+'/product/'+clickedId+'/quantity/'+quantity,
+                type: "PUT",
+                success: function(){
+                    reload();
+                }
+            });
+        }
+	});
+
+	$('body').on('click', '.delete', function(e){
+	    e.preventDefault();
+	    e.stopPropagation();
+	    var clickedId = this.id;
+	    var id_receipt = $("#receipt_number").text();
+        $.ajax({
+            url: '/receipt/'+id_receipt+'/product/'+clickedId,
+            type: "DELETE",
+            success: function(){
+                reload();
+            }
+        });
 	});
 
     // открытие кассы
@@ -77,6 +104,11 @@ $(document).ready(function(){
 		});
 	});
 
+	// при нажатии назад возвращает список категорий
+	$("body").on('click', '#back', function(){
+	    show_categories();
+	});
+
     // делает запрос скрипту и отрисовывает список категорий
 	function show_categories(){
 	    $.ajax({
@@ -95,6 +127,7 @@ $(document).ready(function(){
 	        }
 	    });
 	}
+
     //перезагрузка данных на странице
 	function reload(){
         $.ajax({
@@ -125,7 +158,7 @@ $(document).ready(function(){
                                 <div class="col-md-2">'+product.price+' грн.</div>\
                                 <div class="col-md-2">'+product.summa+' грн.</div>\
                                 <div class="col-md-1">\
-                                    <a href="#" class="edit_count" id="'+product.product_id+'"> <span class="glyphicon glyphicon-pencil"></span></a>\
+                                    <a href="#" class="edit-count" id="'+product.product_id+'"> <span class="glyphicon glyphicon-pencil"></span></a>\
                                     <a href ="#" class="delete" id="'+product.product_id+'"> <span class="glyphicon glyphicon-remove"></span></a>\
                                 </div>\
                             </div>\
@@ -134,7 +167,7 @@ $(document).ready(function(){
                     //выводим сумму чека, общую сумму кассы
                     $('#product-list').append(
                     '<div class="row product">\
-							<div class="col-md-2 col-md-offset-7 text-success">Сумма чека:</div>\
+							<div class="col-md-2 col-md-offset-7 text-success">Общая сумма:</div>\
 							<div class="col-md-2 text-success">'+data.receipt_summ+' грн</div>\
 						</div>\
                     ');

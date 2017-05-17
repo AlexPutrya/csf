@@ -137,14 +137,23 @@ class ReceiptAction(Resource):
         db.session.commit()
         return 204
 
-    # удалить товар из чека/НУЖНО ВЫНЕСТИ В ОДДЕЛЬНЫЙ КЛАСС НЕ БУДЕТ ПРОХОДИТЬ ПО РОУТИНГУ
-    def delete(self, id_receipt, id_product):
-        pass
-
     # изменить количество в чеке
     def put(self, id_receipt, id_product, quantity):
-        pass
+        if quantity > 0:
+            sale = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
+            sale.quantity = quantity
+            db.session.commit()
+        return 204
 
+# удаление товара из чека
+class RecProdDel(Resource):
+    # удалить товар из чека
+    def delete(self, id_receipt, id_product):
+        sale = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
+        db.session.delete(sale)
+        db.session.commit()
+
+#манипуляции с кассовой сменой открытие и закрытие
 class CashboxStatus(Resource):
     # открыть кассовую смену
     def post(self):
@@ -177,6 +186,7 @@ api.add_resource(Products, '/categories/<int:id_category>/products')
 api.add_resource(ProductAction, '/products/<int:id_product>')
 api.add_resource(Receipts, '/receipt')
 api.add_resource(ReceiptAction, '/receipt/<int:id_receipt>/product/<int:id_product>/quantity/<int:quantity>')
+api.add_resource(RecProdDel, '/receipt/<int:id_receipt>/product/<int:id_product>')
 api.add_resource(CashboxStatus, '/cashbox/status')
 
 @app.route('/')
