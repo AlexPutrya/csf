@@ -121,3 +121,8 @@ h3 {
 #product-list {
     min-height: 15em;
 }
+
+h4 {
+    margin: 0;
+    padding: 0;
+}

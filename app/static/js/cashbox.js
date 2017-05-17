@@ -2,7 +2,7 @@ $(document).ready(function(){
 
     reload();
     // после загрузки страницы отрисовываем группы в блоке
-//    show_categories();
+    show_categories();
 
     // Загрузка списка товаров в группе
 	$("body").on('click', '.list-group-item', function(e){
@@ -120,18 +120,22 @@ $(document).ready(function(){
                         $("#product-list").append(
                             '<div class="row product">\
                                 <div class="col-md-1">'+product.number+'</div>\
-                                <div class="col-md-5">'+product.name+'</div>\
+                                <div class="col-md-4">'+product.name+'</div>\
                                 <div class="col-md-2">'+product.quantity+'шт</div>\
-                                <div class="col-md-2">'+product.price+' грн</div>\
-                                <div class="col-md-2">'+product.summa+' грн</div>\
+                                <div class="col-md-2">'+product.price+' грн.</div>\
+                                <div class="col-md-2">'+product.summa+' грн.</div>\
+                                <div class="col-md-1">\
+                                    <a href="#" class="edit_count" id="'+product.product_id+'"> <span class="glyphicon glyphicon-pencil"></span></a>\
+                                    <a href ="#" class="delete" id="'+product.product_id+'"> <span class="glyphicon glyphicon-remove"></span></a>\
+                                </div>\
                             </div>\
                         ');
                     });
                     //выводим сумму чека, общую сумму кассы
                     $('#product-list').append(
                     '<div class="row product">\
-							<div class="col-md-2 col-md-offset-8">Сумма чека:</div>\
-							<div class="col-md-2">'+data.receipt_summ+' грн</div>\
+							<div class="col-md-2 col-md-offset-7 text-success">Сумма чека:</div>\
+							<div class="col-md-2 text-success">'+data.receipt_summ+' грн</div>\
 						</div>\
                     ');
                     $("#cash").text(data.cash+' грн');
