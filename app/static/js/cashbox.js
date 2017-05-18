@@ -62,6 +62,7 @@ $(document).ready(function(){
         }
 	});
 
+    //удаление товара из чека
 	$('body').on('click', '.delete', function(e){
 	    e.preventDefault();
 	    e.stopPropagation();
