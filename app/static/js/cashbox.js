@@ -24,6 +24,7 @@ $(document).ready(function(){
                     $(".category-box .list-group-item").remove();
                     // выводим кнопку возврата к категориям
                     $('#back').css('display','block');
+                    $('#title-block').text("Товары");
                     $.each(data.products,function(key, product){
                         $(".category-box .list-group").append(
                         '<a href="#" class="list-group-item" id="product-'+ product.id +'">'+ product.name +'<span class="badge">'+ product.price +' грн.</span></a>'
@@ -31,6 +32,7 @@ $(document).ready(function(){
                     });
                 }
             });
+        //добавляем товар в чек
 		}else if(clickedId[0] == 'product'){
 		    var id_receipt = $("#receipt_number").text();
 		    var quantity = prompt("Количество", '>1');
@@ -101,6 +103,21 @@ $(document).ready(function(){
 		    success: function(){
 		        reload();
 		        $("#receipt_id h4").remove();
+		        $("#cash").text('');
+		        $(".product")
+		    }
+		});
+	});
+
+    //пробиваем чек
+    $("#commit-check").on('click', function(e){
+	    e.preventDefault();
+		e.stopPropagation();
+		$.ajax({
+		    url: '/receipt',
+		    type: 'PUT',
+		    success: function(){
+		        reload();
 		    }
 		});
 	});
@@ -108,6 +125,7 @@ $(document).ready(function(){
 	// при нажатии назад возвращает список категорий
 	$("body").on('click', '#back', function(){
 	    show_categories();
+	    $('#title-block').text("Категории");
 	});
 
     // делает запрос скрипту и отрисовывает список категорий
@@ -165,14 +183,16 @@ $(document).ready(function(){
                             </div>\
                         ');
                     });
-                    //выводим сумму чека, общую сумму кассы
-                    $('#product-list').append(
-                    '<div class="row product">\
-							<div class="col-md-2 col-md-offset-7 text-success">Общая сумма:</div>\
-							<div class="col-md-2 text-success">'+data.receipt_summ+' грн</div>\
-						</div>\
-                    ');
-                    $("#cash").text(data.cash+' грн');
+                    if(data.receipt_summ != 0){
+                        //выводим сумму чека, общую сумму кассы
+                        $('#product-list').append(
+                        '<div class="row product">\
+                                <div class="col-md-2 col-md-offset-7 text-success">Общая сумма:</div>\
+                                <div class="col-md-2 text-success">'+data.receipt_summ+' грн</div>\
+                            </div>\
+                        ');
+                    }
+                    $("#cash").text(data.cash+' грн.');
                     // удаляем и выводим новый заголовок с id чека, и делаем кнопки правильного статуса
                     $("#receipt_id h4").remove();
                     $("#receipt_id").append('<h4>Чек № <span id="receipt_number">'+data.id_receipt+'</span></h4>');

@@ -117,7 +117,21 @@ class Receipts(Resource):
 
     # Пробиваем чек
     def put(self):
-        pass
+        receipt_summ = 0
+
+        # опедеяме сумму чека
+        sales = Sale.query.filter_by(receipt_id=session['id_receipt'])
+        for sale in sales:
+            receipt_summ += sale.price * sale.quantity
+        # закрываем чек и добавляем сумму чека к сумме кассы
+        cashbox = Cashbox.query.filter_by(id=session['id_cashbox']).one()
+        receipt = Receipt.query.filter_by(id=session['id_receipt']).one()
+        receipt.status = 0
+        cashbox.cash += receipt_summ
+        new_receipt = Receipt(time=datetime.utcnow(), cashbox_id=session['id_cashbox'])
+        db.session.add(new_receipt)
+        db.session.commit()
+        session['id_receipt'] = new_receipt.id
 
 class ReceiptAction(Resource):
     # добавить товар
