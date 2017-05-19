@@ -119,11 +119,12 @@ class Receipts(Resource):
     def put(self):
         receipt_summ = 0
 
-        # опедеяме сумму чека
+        #проверяем не пытается ли пользователь пробить пустой чек
         count_sales = Sale.query.filter_by(receipt_id=session['id_receipt']).count()
         if count_sales == 0:
             return 404
         sales = Sale.query.filter_by(receipt_id=session['id_receipt'])
+        # определяем сумму чека
         for sale in sales:
             receipt_summ += sale.price * sale.quantity
         # закрываем чек и добавляем сумму чека к сумме кассы
