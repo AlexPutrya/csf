@@ -35,13 +35,15 @@ $(document).ready(function(){
 		}else if(clickedId[0] == 'product'){
 		    var id_receipt = $("#receipt_number").text();
 		    var quantity = prompt("Количество", '>1');
-            $.ajax({
-                url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
-                type: "POST",
-                success: function(){
-                    reload();
-                }
-            });
+		    if (quantity >0){
+                $.ajax({
+                    url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
+                    type: "POST",
+                    success: function(){
+                        reload();
+                    }
+                });
+		    }
 		}
 	});
 
