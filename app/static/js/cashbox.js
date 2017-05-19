@@ -1,8 +1,7 @@
 $(document).ready(function(){
 
-    reload();
-    // после загрузки страницы отрисовываем группы в блоке
     show_categories();
+    reload();
 
     // Загрузка списка товаров в группе
 	$("body").on('click', '.list-group-item', function(e){
@@ -128,25 +127,6 @@ $(document).ready(function(){
 	    $('#title-block').text("Категории");
 	});
 
-    // делает запрос скрипту и отрисовывает список категорий
-	function show_categories(){
-	    $.ajax({
-	        url: '/categories',
-	        type: 'GET',
-	        success: function(data){
-	            //очищаем группы для загрузки товаров
-			    $(".category-box .list-group-item").remove();
-			    // прячем кнопку возврата к категориям
-                $('#back').css('display','none');
-                $.each(data.category,function(key, cat){
-                    $(".category-box .list-group").append(
-                    '<a href="#" class="list-group-item" id="group-'+ cat.id +'">'+ cat.name +'</a>'
-                    );
-                });
-	        }
-	    });
-	}
-
     //перезагрузка данных на странице
 	function reload(){
         $.ajax({
@@ -169,6 +149,9 @@ $(document).ready(function(){
                     //очищаем список позиций чека и загружем новые данные если они есть
                     $('.product').remove();
                     $.each(data.receipt_products,function(key, product){
+                        if((data.receipt_products).length == 0){
+                            show_categories();
+                        }
                         $("#product-list").append(
                             '<div class="row product">\
                                 <div class="col-md-1">'+product.number+'</div>\
@@ -192,7 +175,9 @@ $(document).ready(function(){
                             </div>\
                         ');
                     }
-                    $("#cash").text(data.cash+' грн.');
+                    if(data.cash != 0){
+                        $("#cash").text(data.cash+' грн.');
+                    }
                     // удаляем и выводим новый заголовок с id чека, и делаем кнопки правильного статуса
                     $("#receipt_id h4").remove();
                     $("#receipt_id").append('<h4>Чек № <span id="receipt_number">'+data.id_receipt+'</span></h4>');
@@ -202,5 +187,24 @@ $(document).ready(function(){
                 }
             }
         });
+	}
+
+	    // делает запрос скрипту и отрисовывает список категорий
+	function show_categories(){
+	    $.ajax({
+	        url: '/categories',
+	        type: 'GET',
+	        success: function(data){
+	            //очищаем группы для загрузки товаров
+			    $(".category-box .list-group-item").remove();
+			    // прячем кнопку возврата к категориям
+                $('#back').css('display','none');
+                $.each(data.category,function(key, cat){
+                    $(".category-box .list-group").append(
+                    '<a href="#" class="list-group-item" id="group-'+ cat.id +'">'+ cat.name +'</a>'
+                    );
+                });
+	        }
+	    });
 	}
 });

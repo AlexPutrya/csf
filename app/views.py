@@ -120,6 +120,9 @@ class Receipts(Resource):
         receipt_summ = 0
 
         # опедеяме сумму чека
+        count_sales = Sale.query.filter_by(receipt_id=session['id_receipt']).count()
+        if count_sales == 0:
+            return 404
         sales = Sale.query.filter_by(receipt_id=session['id_receipt'])
         for sale in sales:
             receipt_summ += sale.price * sale.quantity
@@ -132,6 +135,7 @@ class Receipts(Resource):
         db.session.add(new_receipt)
         db.session.commit()
         session['id_receipt'] = new_receipt.id
+        return 204
 
 class ReceiptAction(Resource):
     # добавить товар
