@@ -18,6 +18,8 @@ def genTime(now_date, now):
     # вечерние продажи 5-8минут
     evening_start = datetime.combine(now_date, time(17, 00))
     evening_end = datetime.combine(now_date, time(19, 00))
+    # день недели
+    weekday = datetime.isoweekday(now_date)
 
     if now >= morning_start and now <= morning_end:
         return random.randint(5, 10)
@@ -25,6 +27,8 @@ def genTime(now_date, now):
         return random.randint(4, 7)
     elif now >= evening_start and now <= evening_end:
         return random.randint(5, 8)
+    elif weekday == 6 or weekday == 7:
+        return random.randint(15, 40)
     else:
         return random.randint(20, 40)
 
