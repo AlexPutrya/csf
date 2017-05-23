@@ -7,7 +7,7 @@ open_time = time(7, 00)
 close_time = time(19, 00)
 start_date = date(2017, 4, 1)
 end_date = date(2017, 4, 30)
-
+# генерим коефициенты
 def genTime(now_date, now):
     # утро продажи каждые 5-10минут
     morning_start = datetime.combine(now_date, time(7, 00))
@@ -33,15 +33,20 @@ def genTime(now_date, now):
         return random.randint(20, 40)
 
 def main():
+    # стартуем с этой даты
+    now_date = date(2016, 1, 1)
     # крутим цикл по количеству дней
-    for day in range(1, 31):
+    while(now_date < date(2017, 1, 1)):
         # получаем дату текущего дня, datetime закрытия и открытия
-        now_date = date(2017, 4, day)
+        now_date += timedelta(days=1)
         now_end = datetime.combine(now_date, close_time)
         # счетчик который будет расти до конца дня и потом начинатся сначала дня, в данном месте будет всегда равен началу дня
         now = datetime.combine(now_date, open_time)
         # открываем кассовую смену на начало дня
         cashbox = Cashbox(now)
+        cashbox_summ = 0
+        # количество созданных товаров
+        products_count = Product.query.count()
         # цикл  для чеков
         while now < now_end:
             # текущее время для продажи
@@ -55,8 +60,9 @@ def main():
             # генерем количество позиций для продажи в чеке от1 до 3х позиций
             for sale in range(random.randint(1, 3)):
                 while(True):
-                    # ПРОПИСАТЬ ВЕРХНЕЙ ГНРАНИЦЕЙ ПОСЕДНИЙ id
-                    product_id = random.randint(1, 3)
+                    # верхней границей является id последнего товра в списке,
+                    # при учете что товары не удалялись и нет разрывов в очередности
+                    product_id = random.randint(1, products_count)
                     if not(product_id in products):
                         products.append(product_id)
                         break
@@ -67,11 +73,15 @@ def main():
                 new_sale.product = new_product
                 # добавляем продажу в чек
                 receipt.sale.append(new_sale)
+                # добавляем сумму в общую для кассы при учете что в чеке количество уникального товара = 1
+                cashbox_summ += new_product.price
 
             receipt.status = 0
             # добавляем чеки в кассовую смену
             cashbox.receipts.append(receipt)
         cashbox.status = 0
+        cashbox.cash = cashbox_summ
+        cashbox.close = now_end
         db.session.add(cashbox)
         db.session.commit()
 

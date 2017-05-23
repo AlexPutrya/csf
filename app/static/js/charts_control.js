@@ -78,7 +78,7 @@ $(document).ready(function(){
     // // myChart.data.labels[6] = "Red";
     // monthChart.update()
     $.ajax({
-      url: "/statistic/year/2017",
+      url: "/statistic/year/2016",
       type: "GET",
       success: function(data){
         var price = []
