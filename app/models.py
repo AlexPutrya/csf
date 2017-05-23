@@ -65,6 +65,7 @@ class Receipt(db.Model):
     time = db.Column(db.DateTime, nullable = False)
     cashbox_id = db.Column(db.Integer, db.ForeignKey('cashbox.id'))
     status = db.Column(db.SmallInteger, default = STATUS_OPEN)
+    cash = db.Column(db.Integer)
 
     sale = db.relationship('Sale', backref = 'receipts', cascade="all, delete-orphan")
 

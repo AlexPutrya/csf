@@ -131,6 +131,7 @@ class Receipts(Resource):
         cashbox = Cashbox.query.filter_by(id=session['id_cashbox']).one()
         receipt = Receipt.query.filter_by(id=session['id_receipt']).one()
         receipt.status = 0
+        receipt.cash = receipt_summ
         cashbox.cash += receipt_summ
         new_receipt = Receipt(time=datetime.utcnow(), cashbox_id=session['id_cashbox'])
         db.session.add(new_receipt)
