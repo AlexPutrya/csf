@@ -1,11 +1,18 @@
 $(document).ready(function(){
-  var month = document.getElementById("monthChart");
-  var monthChart = new Chart(month, {
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = date.getMonth()+1;
+  statistic_month(year, month);
+  // сразу отрисовываем годовой график
+  statistic_year(year);
+
+  var year = document.getElementById("yearChart");
+  var yearChart = new Chart(year, {
       type: 'bar',
       data: {
           labels: [],
           datasets: [{
-              label: 'Сумма',
+              label: 'Сумма, грн.',
               data: [],
               backgroundColor: [
                   'rgba(255, 99, 132, 0.2)',
@@ -25,25 +32,16 @@ $(document).ready(function(){
               ],
               borderWidth: 1
           }]
-      },
-      options: {
-          scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero:true
-                  }
-              }]
-          }
       }
   });
 
 
 
   var data = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      labels: [],
       datasets: [
           {
-              label: "My First dataset",
+              label: "Сумма, грн.",
               fill: false,
               lineTension: 0.1,
               backgroundColor: "rgba(75,192,192,0.4)",
@@ -61,25 +59,41 @@ $(document).ready(function(){
               pointHoverBorderWidth: 2,
               pointRadius: 1,
               pointHitRadius: 10,
-              data: [65, 59, 80, 81, 56, 55, 40],
+              data: [],
               spanGaps: false,
           }
       ]
   };
-  var year = document.getElementById("yearChart");
-  var yearChart = new Chart(year, {
+  var month = document.getElementById("monthChart");
+  var monthChart = new Chart(month, {
       type: 'line',
       data: data,
   });
 
-
-  $("#adddata").click(function(){
+  function statistic_year(year){
     $.ajax({
-      url: "/statistic/year/2016",
+      url: "/statistic/year/"+(year-1),
       type: "GET",
       success: function(data){
         var price = []
-        monthChart.data.labels =[]
+        yearChart.data.labels =[]
+        $.each(data, function(key,value){
+          price[key-1] = value;
+          yearChart.data.labels.push(getMonthName(key));
+        })
+        yearChart.data.datasets[0].data = price;
+        yearChart.update()
+      }
+    });
+  }
+
+  function statistic_month(year, month){
+    $.ajax({
+      url: "/statistic/year/"+ year +"/month/"+month,
+      type: "GET",
+      success: function(data){
+        var price = []
+        monthChart.data.labels = []
         $.each(data, function(key,value){
           price[key-1] = value;
           monthChart.data.labels.push(key);
@@ -88,22 +102,15 @@ $(document).ready(function(){
         monthChart.update()
       }
     });
-  });
+  }
 
-  $("#adddata2").click(function(){
-    $.ajax({
-      url: "/statistic/year/2016/month/4",
-      type: "GET",
-      success: function(data){
-        var price = []
-        yearChart.data.labels = []
-        $.each(data, function(key,value){
-          price[key-1] = value;
-          yearChart.data.labels.push(key);
-        })
-        yearChart.data.datasets[0].data = price;
-        yearChart.update()
-      }
-    });
-  });
+  function getMonthName(number){
+    var month_names = [
+                      "Январь", "Февраль", "Март",
+                      "Апрель", "Май", "Июнь",
+                      "Июль", "Август", "Сентябрь",
+                      "Октябрь", "Ноябрь", "Декабрь"
+    ];
+    return month_names[number-1];
+  }
 });

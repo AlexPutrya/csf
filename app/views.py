@@ -190,6 +190,7 @@ class CashboxStatus(Resource):
     def put(self):
         cashbox = Cashbox.query.filter_by(id=session['id_cashbox']).one()
         cashbox.status = 0
+        cashbox.close = datetime.utcnow()
         receipt = Receipt.query.filter_by(id=session['id_receipt']).one()
         if receipt.status == 1:
             db.session.delete(receipt)
@@ -218,13 +219,17 @@ class StatisticYear(Resource):
 class StatisticMonth(Resource):
     def get(self, year, month):
         # получаем список всех чеков за определенный месяц
-        receipts = Receipt.query.filter(extract('month', Receipt.time) == month).all()
+        receipts = Receipt.query.filter(extract('year', Receipt.time) == year,extract('month', Receipt.time) == month).all()
         days = {}
         for receipt in receipts:
-            if not (receipt.time.day in days):
-                days[receipt.time.day] = receipt.cash
+            if receipt.cash != None:
+                if not (receipt.time.day in days):
+                    days[receipt.time.day] = receipt.cash
+                else:
+                    # return  receipt.cash
+                    days[receipt.time.day] += receipt.cash
             else:
-                days[receipt.time.day] += receipt.cash
+                continue
         return days
 
 api.add_resource(Categories, '/categories')
