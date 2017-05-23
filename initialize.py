@@ -53,7 +53,7 @@ def main():
             now += timedelta(minutes = genTime(now_date, now))
             # создаем новый чек и записываем время как время пробития
             receipt = Receipt(time = now)
-
+            receipt_summ = 0
             # для генератора случайных id продуктов которые не повторяются
             products=[]
             product_id = 0
@@ -75,8 +75,10 @@ def main():
                 receipt.sale.append(new_sale)
                 # добавляем сумму в общую для кассы при учете что в чеке количество уникального товара = 1
                 cashbox_summ += new_product.price
+                receipt_summ += new_product.price
 
             receipt.status = 0
+            receipt.cash = receipt_summ
             # добавляем чеки в кассовую смену
             cashbox.receipts.append(receipt)
         cashbox.status = 0

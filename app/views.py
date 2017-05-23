@@ -221,11 +221,10 @@ class StatisticMonth(Resource):
         receipts = Receipt.query.filter(extract('month', Receipt.time) == month).all()
         days = {}
         for receipt in receipts:
-            for sale in receipt.sale:
-                if not (receipt.time.day in days):
-                    days[receipt.time.day] = sale.quantity * sale.price
-                else:
-                    days[receipt.time.day] += sale.quantity * sale.price
+            if not (receipt.time.day in days):
+                days[receipt.time.day] = receipt.cash
+            else:
+                days[receipt.time.day] += receipt.cash
         return days
 
 api.add_resource(Categories, '/categories')

@@ -92,7 +92,7 @@ $(document).ready(function(){
 
   $("#adddata2").click(function(){
     $.ajax({
-      url: "/statistic/year/2016/month/8",
+      url: "/statistic/year/2016/month/4",
       type: "GET",
       success: function(data){
         var price = []
