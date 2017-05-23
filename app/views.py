@@ -199,6 +199,21 @@ class CashboxStatus(Resource):
         del session['id_cashbox'], session['id_receipt']
         return 204
 
+# Получаем статистику за год суммы по месяцам
+class StatisticYear(Resource):
+    def get(self, year):
+        month = {}
+        cashboxes = Cashbox.query.all()
+        for cashbox in cashboxes:
+            if cashbox.open.year == year:
+                if not (cashbox.open.month in month):
+                    month[cashbox.open.month] = cashbox.cash
+                else:
+                    month[cashbox.open.month] += cashbox.cash
+            else:
+                continue
+        return month
+
 api.add_resource(Categories, '/categories')
 api.add_resource(CategoryAction, '/categories/<int:id_category>')
 api.add_resource(Products, '/categories/<int:id_category>/products')
@@ -207,6 +222,7 @@ api.add_resource(Receipts, '/receipt')
 api.add_resource(ReceiptAction, '/receipt/<int:id_receipt>/product/<int:id_product>/quantity/<int:quantity>')
 api.add_resource(RecProdDel, '/receipt/<int:id_receipt>/product/<int:id_product>')
 api.add_resource(CashboxStatus, '/cashbox/status')
+api.add_resource(StatisticYear, '/statistic/year/<int:year>')
 
 @app.route('/')
 def index():
@@ -229,3 +245,7 @@ def catalog():
 @app.route('/cashbox', methods=["GET", "POST"])
 def cashbox():
     return render_template('cashbox.html')
+
+@app.route('/charts')
+def charts():
+    return render_template('charts.html')

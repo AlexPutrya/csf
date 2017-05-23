@@ -1,0 +1,17 @@
+{% extends 'layout.html'  %}
+{% block body%}
+<script src="{{ url_for('static', filename='js/charts/node_modules/chart.js/dist/Chart.min.js')}}"></script>
+<script src="{{ url_for('static', filename = 'js/charts_control.js') }}"></script>
+</style>
+<div class="row">
+  <div id="chart_month" class="col-md-6">
+    <h2>Статистика за месяц</h2>
+    <canvas id="monthChart"></canvas>
+    <input type="button" value="AddData" id="adddata">
+  </div>
+  <div id="chart_month" class="col-md-6">
+    <h2>Статистика за год</h2>
+    <canvas id="yearChart"></canvas>
+  </div>
+</div>
+{% endblock %}

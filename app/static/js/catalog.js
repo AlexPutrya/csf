@@ -189,7 +189,7 @@ $(document).ready(function(){
 		var clickedId = this.id.split("-");
 		if(confirm("Вы точно хотите удалить элемент?")){
 		    var id_category = clickedId[2]
-			// Удаление группы 
+			// Удаление группы
 			if(clickedId[1] == "group"){
 				// отправляем скрипту id категории которую нужно удалить, убираем из DOM категорию
 				$.ajax({
@@ -215,7 +215,7 @@ $(document).ready(function(){
                     }
                 });
 			}
-			
+
 		}
 	});
 	// Закрытие модального окна и возвращение к обычному варианту
