@@ -3,7 +3,7 @@ $(document).ready(function(){
   var monthChart = new Chart(month, {
       type: 'bar',
       data: {
-          labels: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сеньтябрь","Октябрь", "Ноябрь", "Декабрь"],
+          labels: [],
           datasets: [{
               label: 'Сумма',
               data: [],
@@ -74,19 +74,35 @@ $(document).ready(function(){
 
 
   $("#adddata").click(function(){
-    // monthChart.data.datasets[0].data = [7, 5, 3, 2, 5, 9];
-    // // myChart.data.labels[6] = "Red";
-    // monthChart.update()
     $.ajax({
       url: "/statistic/year/2016",
       type: "GET",
       success: function(data){
         var price = []
+        monthChart.data.labels =[]
         $.each(data, function(key,value){
           price[key-1] = value;
+          monthChart.data.labels.push(key);
         })
         monthChart.data.datasets[0].data = price;
         monthChart.update()
+      }
+    });
+  });
+
+  $("#adddata2").click(function(){
+    $.ajax({
+      url: "/statistic/year/2016/month/8",
+      type: "GET",
+      success: function(data){
+        var price = []
+        yearChart.data.labels = []
+        $.each(data, function(key,value){
+          price[key-1] = value;
+          yearChart.data.labels.push(key);
+        })
+        yearChart.data.datasets[0].data = price;
+        yearChart.update()
       }
     });
   });

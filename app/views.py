@@ -6,7 +6,7 @@ from datetime import datetime
 from app import api
 from flask_restful import Resource
 from flask_restful import reqparse
-
+from sqlalchemy import extract
 
 # сессионные переменные  в куках будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
@@ -214,6 +214,19 @@ class StatisticYear(Resource):
                 continue
         return month
 
+class StatisticMonth(Resource):
+    def get(self, year, month):
+        # получаем список всех чеков за определенный месяц
+        receipts = Receipt.query.filter(extract('month', Receipt.time) == month).all()
+        days = {}
+        for receipt in receipts:
+            for sale in receipt.sale:
+                if not (receipt.time.day in days):
+                    days[receipt.time.day] = sale.quantity * sale.price
+                else:
+                    days[receipt.time.day] += sale.quantity * sale.price
+        return days
+
 api.add_resource(Categories, '/categories')
 api.add_resource(CategoryAction, '/categories/<int:id_category>')
 api.add_resource(Products, '/categories/<int:id_category>/products')
@@ -223,6 +236,7 @@ api.add_resource(ReceiptAction, '/receipt/<int:id_receipt>/product/<int:id_produ
 api.add_resource(RecProdDel, '/receipt/<int:id_receipt>/product/<int:id_product>')
 api.add_resource(CashboxStatus, '/cashbox/status')
 api.add_resource(StatisticYear, '/statistic/year/<int:year>')
+api.add_resource(StatisticMonth, '/statistic/year/<int:year>/month/<int:month>')
 
 @app.route('/')
 def index():
