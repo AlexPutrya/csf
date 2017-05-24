@@ -2,9 +2,10 @@ $(document).ready(function(){
   var date = new Date();
   var year = date.getFullYear();
   var month = date.getMonth()+1;
+
+  //выводим статитстику за предидущий год и за текущий месяц
   statistic_month(year, month);
-  // сразу отрисовываем годовой график
-  statistic_year(year);
+  statistic_year(year-1);
 
   var year = document.getElementById("yearChart");
   var yearChart = new Chart(year, {
@@ -71,7 +72,7 @@ $(document).ready(function(){
   //выовод годовой статистики
   function statistic_year(year){
     $.ajax({
-      url: "/statistic/year/"+(year-1),
+      url: "/statistic/year/"+year,
       type: "GET",
       success: function(data){
         var price = []
@@ -103,6 +104,19 @@ $(document).ready(function(){
       }
     });
   }
+
+  // $('.datepicker--cell-month').on('click', function(){
+  //   alert('test');
+  //   // var atr = this.attr['data-month'];
+  // });
+
+  $("#dt").datepicker({
+    onSelect: function(formattedDate, date, inst) {
+        // console.log(date.getMonth());
+        statistic_month(date.getFullYear() ,date.getMonth()+1);
+    }
+  });
+
 
   //получить имя месяца для таблицы входные данные 1..12
   function getMonthName(number){
