@@ -115,25 +115,27 @@ $(document).ready(function(){
 
   //вывод диаграммы по количеству продаж товаров
   function statistic_product(){
-    var product = document.getElementById("productChart");
-    var productChart = new Chart(product, {
-      type: 'doughnut',
-      data:{
-        datasets: [{
-            data: [10, 20, 30],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)'
-            ]
-        }],
+    $.ajax({
+      url: "/statistic/products",
+      type: "GET",
+      success: function(data){
+        var product = document.getElementById("productChart");
+        var productChart = new Chart(product, {
+          type: 'doughnut',
+          data:{
+            datasets: [{
+                data: data['data'],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ]
+            }],
 
-        // These labels appear in the legend and in the tooltips when hovering different arcs
-        labels: [
-            'Red',
-            'Yellow',
-            'Blue'
-        ]
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: data['labels']
+          }
+        });
       }
     });
     $("#title_product").text("Статистика по количеству продаж ");

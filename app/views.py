@@ -6,7 +6,7 @@ from datetime import datetime
 from app import api
 from flask_restful import Resource
 from flask_restful import reqparse
-from sqlalchemy import extract
+from sqlalchemy import extract, func
 
 # сессионные переменные  в куках будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
@@ -232,6 +232,16 @@ class StatisticMonth(Resource):
                 continue
         return days
 
+class StatisticProduct(Resource):
+    def get(self):
+        products = db.session.query(Sale.product_id, Product, db.func.sum(Sale.quantity)).group_by(Sale.product_id).join(Product).all()
+        labels = []
+        data = []
+        for product in products:
+                data.append(product[2])
+                labels.append(product[1].name)
+        return {'labels':labels, 'data':data}
+
 api.add_resource(Categories, '/categories')
 api.add_resource(CategoryAction, '/categories/<int:id_category>')
 api.add_resource(Products, '/categories/<int:id_category>/products')
@@ -242,6 +252,7 @@ api.add_resource(RecProdDel, '/receipt/<int:id_receipt>/product/<int:id_product>
 api.add_resource(CashboxStatus, '/cashbox/status')
 api.add_resource(StatisticYear, '/statistic/year/<int:year>')
 api.add_resource(StatisticMonth, '/statistic/year/<int:year>/month/<int:month>')
+api.add_resource(StatisticProduct, '/statistic/products')
 
 @app.route('/')
 def index():
