@@ -69,7 +69,7 @@ $(document).ready(function(){
       }
   });
 
-  //выовод годовой статистики
+  //вывод годовой статистики
   function statistic_year(year){
     $.ajax({
       url: "/statistic/year/"+year,
@@ -82,7 +82,8 @@ $(document).ready(function(){
           yearChart.data.labels.push(getMonthName(key));
         })
         yearChart.data.datasets[0].data = price;
-        yearChart.update()
+        yearChart.update();
+        $("#title_year").text("Статистика за "+year+" год");
       }
     });
   }
@@ -100,19 +101,14 @@ $(document).ready(function(){
           monthChart.data.labels.push(key);
         })
         monthChart.data.datasets[0].data = price;
-        monthChart.update()
+        monthChart.update();
+        $("#title_month").text("Статистика за " +getMonthName(month)+" "+year);
       }
     });
   }
-
-  // $('.datepicker--cell-month').on('click', function(){
-  //   alert('test');
-  //   // var atr = this.attr['data-month'];
-  // });
-
+  // обработчик начатия на месяц календаря получаем дату
   $("#dt").datepicker({
     onSelect: function(formattedDate, date, inst) {
-        // console.log(date.getMonth());
         statistic_month(date.getFullYear() ,date.getMonth()+1);
     }
   });
