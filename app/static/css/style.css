@@ -1,11 +1,10 @@
 body {
-	background-color: #333333;
+	background-image: url(../img/background.jpg);
+	background-repeat:no-repeat;
 }
 
 .container-fluid {
 	width: 100%;
-	background-color: #ECF0F5;
-	height: 60em;
 }
 h1{
 	margin: 0;
@@ -13,36 +12,27 @@ h1{
 	color: white;
 }
 header {
-	height: 20em;
 	width: 100%;
-	background-color: #333333;
+	margin-bottom: 30px;
 }
 
 #content {
 	margin: 0 auto;
-	margin-top: 50px;
 	width: 90%;
 }
 
 /*На весь блок*/
 .menu {
-margin-top: 20px;
-width: 100%; 
-height: 200px; 
+width: 100%;
+height: 200px;
 background: white; /* Цвет фона */
 text-align: center;
-}
-
-}
-h3 {
-	text-align: center;
 }
 
 .menu .glyphicon {
 	margin-top: 50px;
 	font-size: 50px;
 	color: #337AB7;
-	/*color: #F97C2A;*/
 }
 
 /*catalog page*/
@@ -54,11 +44,11 @@ h3 {
 h2 {
 	margin: 0;
 	text-align: center;
-} 
+}
 h3 {
 	text-align: center;
-	text-decoration: underline;
 	padding-top: 10px;
+	margin: 0;
 }
 .catalog {
 	background-color: white;
@@ -75,7 +65,7 @@ h3 {
 
 /*Modal Window*/
 #modal {
-	width: 300px; 
+	width: 300px;
 	height: 250px; /* Рaзмеры дoлжны быть фиксирoвaны */
 	border-radius: 5px;
 	border: 1px #000 solid;
@@ -89,35 +79,4 @@ h3 {
 	opacity: 0; /* пoлнoстью прoзрaчнo для aнимирoвaния */
 	z-index: 5; /* oкнo дoлжнo быть нaибoлее бoльшем слoе */
 	padding: 20px 10px;
-}
-
-/*Cashbox page*/
-.cashbox {
-	background-color: white;
-	width: 100%;
-	min-height: 25em;
-	border-radius: 5px;
-}
-.category-box h1 {
-	color: black;
-	text-align: center;
-}
-/*кнока возврата назад*/
-#back {
-	display: none;
-}
-
-.quad {
-	padding: 0 2px 0 2px;
-}
-
-
-/*меню кассы */
-.cashbox-menu {
-    text-align: center;
-}
-
-
-#product-list {
-    min-height: 15em;
 }

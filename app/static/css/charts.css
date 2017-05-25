@@ -1,0 +1,11 @@
+/*стиль для всех графиков */
+.chart {
+  background-color: white;
+  text-align: center;
+  box-shadow:  0 0 10px rgba(0,0,0,0.5);
+  border-radius: 3px;
+}
+
+.row {
+  margin-top: 20px;
+}

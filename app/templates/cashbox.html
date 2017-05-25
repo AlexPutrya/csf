@@ -1,13 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+{% block local_import %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/cashbox.css')}}">
+{% endblock%}
 <!--Подключаем скрипт для обработки событий -->
 <script src="{{ url_for('static', filename = 'js/cashbox.js') }}"></script>
 
 		<div class="main" class="row">
 			<div class="col-md-3">
 				<div class="cashbox category-box">
-					<h1 id ='title-block'>Категории</h1>
+					<h3 id ='title-block'>Категории</h3>
 					<button type="button" id="back" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-arrow-left"></span> Назад</button>
 					<!--список категорий или товаров-->
 					<div class="list-group">
@@ -22,13 +25,14 @@
 						<div class="col-md-2">
 							<a  href="#" class="btn btn-default btn" id="open-cashbox"><span class="glyphicon glyphicon-share"></span> Открыть смену</a>
 						</div>
-						<div class="col-md-2">
+						<div class="col-md-2 ">
 							<a href="#" class="btn btn-default" id="close-cashbox"><span class="glyphicon glyphicon-check"></span> Закрыть смену</a>
 						</div>
+						<div class="col-md-2 col-md-offset-1" id="receipt_id">
+						<!-- Номер чека -->
+						</div>
 					</div>
-					<div class="row" id="receipt_id">
-						<!--номер чека-->
-					</div>
+
 					<!--ряд заголовка корзины-->
 					<div class="row" id='product-title'>
 						<div class="col-md-1">№</div>
@@ -63,4 +67,3 @@
 		</div>
 		{% endblock %}
 {% endblock %}
-

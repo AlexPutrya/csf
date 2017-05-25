@@ -2,6 +2,7 @@
 
 {% block local_import %}
 <link rel="stylesheet" href="{{ url_for('static', filename = 'css/datepicker/datepicker.min.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/charts.css')}}">
 {% endblock%}
 
 {% block body%}
@@ -10,20 +11,20 @@
 <script src="{{ url_for('static', filename = 'js/datepicker/datepicker.js')}}"></script>
 </style>
 <div class="row">
-  <div id="chart_month" class="col-md-6 col-md-offset-1">
+  <div id="chart_month" class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-1 chart">
     <h4 id="title_month">Статистика за месяц</h2>
     <canvas id="monthChart"></canvas>
   </div>
-  <div id="calendar" class="col-md-2">
+  <div id="calendar" class="col-xs-2 col-md-2">
     <div id="dt" data-min-view="months" data-view="months" data-date-format="MM yyyy" placeholder="Выберите месяц"> </div>
   </div>
 </div>
 <div class="row">
-  <div id="chart_year" class="col-md-6 col-md-offset-1">
+  <div id="chart_year" class="col-md-6 col-md-offset-1 chart">
     <h4 id="title_year"></h2>
     <canvas id="yearChart"></canvas>
   </div>
-  <div id="dougnut" class="col-md-3 col-md-offset-1">
+  <div id="dougnut" class="col-md-3 col-md-offset-1 chart">
     <h4 id="title_product"></h2>
     <canvas id="productChart"></canvas>
   </div>

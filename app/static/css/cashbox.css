@@ -1,0 +1,35 @@
+/*Cashbox page*/
+.cashbox {
+	background-color: white;
+	width: 100%;
+	min-height: 35em;
+  box-shadow:  0 0 10px rgba(0,0,0,0.5);
+  border-radius: 3px;
+}
+
+.category-box h3 {
+	/*color: black;*/
+	text-align: center;
+}
+
+/*кнока возврата назад*/
+#back {
+	display: none;
+}
+
+/*меню кассы */
+.cashbox-menu {
+    text-align: center;
+}
+#header-toolbar {
+  margin: 5px 0 10px 0;
+}
+
+/*поле куда будут попадать добавленные товары*/
+#product-list {
+    min-height: 25em;
+}
+
+#product-title {
+  border-bottom: 1px solid black;
+}
