@@ -6,8 +6,10 @@ $(document).ready(function(){
   //выводим статитстику за предидущий год и за текущий месяц
   statistic_month(year, month);
   statistic_year(year-1);
+  statistic_product();
 
-  // график по месяцам
+
+  // инициализация графика по месяцам
   var month = document.getElementById("monthChart");
   var monthChart = new Chart(month, {
       type: 'line',
@@ -110,6 +112,32 @@ $(document).ready(function(){
         statistic_month(date.getFullYear() ,date.getMonth()+1);
     }
   });
+
+  //вывод диаграммы по количеству продаж товаров
+  function statistic_product(){
+    var product = document.getElementById("productChart");
+    var productChart = new Chart(product, {
+      type: 'doughnut',
+      data:{
+        datasets: [{
+            data: [10, 20, 30],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)'
+            ]
+        }],
+
+        // These labels appear in the legend and in the tooltips when hovering different arcs
+        labels: [
+            'Red',
+            'Yellow',
+            'Blue'
+        ]
+      }
+    });
+    $("#title_product").text("Статистика по количеству продаж ");
+  }
 
 
   //получить имя месяца для таблицы входные данные 1..12
