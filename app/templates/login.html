@@ -11,15 +11,15 @@
 </head>
 <body>
   <div class="login-content">
-    <form class="login" action="{{ url_for('login')}}" method="POST" name="login" data-toggle="validator">
+    <form role="form" class="login" action="{{ url_for('login')}}" method="POST" name="login">
         <h4>Авторизация</h4>
-        <div class="form-group">
-            <input type="text"  name="email"  class="form-control" required type="text" placeholder="Логин">
-            <div class="help-block with-errors"></div>
+        <div class="form-group has-feedback has-feedback-left">
+            <input type="text"  name="email"  class="form-control" placeholder="Логин">
+            <i class="form-control-feedback glyphicon glyphicon-user"></i>
         </div>
-        <div class="form-group">
-            <input type="password" name="password" class="form-control" required type="text" placeholder="Пароль">
-            <div class="help-block with-errors"></div>
+        <div class="form-group has-feedback has-feedback-left">
+            <input type="password" name="password" class="form-control" placeholder="Пароль">
+            <i class="form-control-feedback glyphicon glyphicon-lock "></i>
         </div>
         <input type="button" value="Войти">
     </form>
