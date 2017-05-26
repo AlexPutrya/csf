@@ -6,11 +6,12 @@
 	<link href="{{ url_for('static', filename = 'css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename = 'css/style.css') }}" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename = 'css/login.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename = 'css/animate.css')}}">
 	<script src="{{url_for('static', filename= 'js/jquery-3.2.1.min.js')}}"></script>
   <script src="{{ url_for('static', filename = 'js/bootstrap/bootstrap.min.js') }}"></script>
 </head>
 <body>
-  <div class="login-content">
+  <div class="login-content animated pulse">
     <form role="form" class="login" action="{{ url_for('login')}}" method="POST" name="login">
         <h4>Авторизация</h4>
         <div class="form-group has-feedback has-feedback-left">
