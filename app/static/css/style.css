@@ -15,6 +15,9 @@ header {
 	width: 100%;
 	margin-bottom: 30px;
 }
+.logo {
+	margin-top: 20px;
+}
 
 #content {
 	margin: 0 auto;
@@ -56,12 +59,7 @@ h3 {
 	min-height: 35em;
 	border-radius: 5px;
 }
-/*login page*/
-.login {
-    margin: 0 auto;
-    margin-top: 10px;
-    width: 500px;
-}
+
 
 /*Modal Window*/
 #modal {

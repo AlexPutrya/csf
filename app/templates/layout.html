@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="ru">
 <head>
 	<meta charset="UTF-8">
@@ -19,20 +18,22 @@
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.5/validator.min.js"></script> -->
 </head>
 <body>
-    <div class="container-fluid">
-		<div class="row">
-			<div class="col-md-1 col-md-offset-1">
-				<header>
-					<div class="logo">
-						<a href="{{ url_for('index') }}"><h1>I'm</h1></a>
-					</div>
-				</header>
-			</div>
-		</div>
+	<div class="container-fluid">
+		<nav class="navbar navbar-light">
+	  	<div class="container-fluid">
+	    	<div class="navbar-header">
+	      	<a class="navbar-brand" href="{{ url_for('index') }}">
+	        	<img alt="I'm Manager" src="...">
+	      	</a>
+	    	</div>
+					<ul class="nav navbar-nav navbar-light">
+						<li><a href="#">Link</a></li>
+					</ul>
+	  	</div>
+		</nav>
         {% block body %}
-			{% block modal_window %}
-			{% endblock %}
+						{% block modal_window %} {% endblock %}
         {% endblock %}
-    </div>
+	</div>
 </body>
 </html>

@@ -1,21 +1,28 @@
-{% extends 'layout.html' %}
-
-{% block body %}
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>Авторизация</title>
+	<link href="{{ url_for('static', filename = 'css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename = 'css/style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename = 'css/login.css')}}">
+	<script src="{{url_for('static', filename= 'js/jquery-3.2.1.min.js')}}"></script>
+  <script src="{{ url_for('static', filename = 'js/bootstrap/bootstrap.min.js') }}"></script>
+</head>
+<body>
+  <div class="login-content">
     <form class="login" action="{{ url_for('login')}}" method="POST" name="login" data-toggle="validator">
-        <h2>Авторизация</h2>
+        <h4>Авторизация</h4>
         <div class="form-group">
-            <label for="email">Логин(email)</label>
-            <input type="text"  name="email"  class="form-control" required type="text">
+            <input type="text"  name="email"  class="form-control" required type="text" placeholder="Логин">
             <div class="help-block with-errors"></div>
         </div>
         <div class="form-group">
-            <label for="password">Пароль</label>
-            <input type="password" name="password" class="form-control" required type="text">
+            <input type="password" name="password" class="form-control" required type="text" placeholder="Пароль">
             <div class="help-block with-errors"></div>
         </div>
-        <div class="checkbox">
-            <label><input type="checkbox">Запомнить меня</label>
-        </div>
-        <input type="submit" value="Войти">
+        <input type="button" value="Войти">
     </form>
-{% endblock %}
+  </div>
+</body>
+</html>
