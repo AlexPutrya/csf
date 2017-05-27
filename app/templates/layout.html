@@ -5,7 +5,7 @@
 	{% if title %}
 	<title>{{ title }}</title>
 	{% else %}
-	<title> FastFoodManager</title>
+	<title> Just.manage</title>
 	{% endif %}
 	<link href="{{ url_for('static', filename = 'css/bootstrap/bootstrap.min.css') }}" rel="stylesheet">
 	<link href="{{ url_for('static', filename = 'css/style.css') }}" rel="stylesheet">
@@ -31,41 +31,23 @@
  					 	<li {% if request.path == '/catalog'%}class="active"{% endif %}><a href="{{ url_for('catalog')}}"><span class="glyphicon glyphicon-list-alt"></span> Справочник</a></li>
  					 	<li {% if request.path == '/cashbox'%}class="active"{% endif %}><a href="{{ url_for('cashbox')}}"><span class="glyphicon glyphicon-usd"></span> Касса</a></li>
 		      </ul>
+					<!-- Выводим календарь только на графиках -->
+					{% if request.path == '/'%}
 		      <form class="navbar-form navbar-left">
 		        <div class="form-group">
-							<input id="dt" data-min-view="months" data-view="months" data-date-format="MM yyyy" placeholder="Выберите месяц">
+							<div class="form-group has-feedback has-feedback-left">
+								<input id="dt" data-min-view="months" data-view="months" data-date-format="MM yyyy" placeholder="Выберите месяц">
+			          <i class="form-control-feedback glyphicon glyphicon-calendar"></i>
+			        </div>
 		        </div>
 		      </form>
+					{% endif %}
 		      <ul class="nav navbar-nav navbar-right">
 						<li><a href="{{ url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Завершить сеанс</a></li>
 		      </ul>
-		    </div><!-- /.navbar-collapse -->
-		  </div><!-- /.container-fluid -->
+		    </div>
+		  </div>
 		</nav>
-		<!-- <div class="row">
-			<div class="col-md-1">
-				<img id="logo-min" src="{{url_for('static', filename = 'img/logo-min.svg')}}">
-				<div class="dropdown">
-				 <button class="btn btn-default btn-md dropdown-toggle" type="button" data-toggle="dropdown"><span class="glyphicon glyphicon-th-list"></span> Меню
-				 <span class="caret"></span></button>
-				 <ul class="dropdown-menu">
-					 <li><a href="{{ url_for('index')}}"><span class="glyphicon glyphicon-home"></span> Главная</a></li>
-					 <li><a href="{{ url_for('catalog')}}"><span class="glyphicon glyphicon-list-alt"></span> Справочник</a></li>
-					 <li><a href="{{ url_for('cashbox')}}"><span class="glyphicon glyphicon-usd"></span> Касса</a></li>
-					 <li class="divider"></li>
-					 <li><a href="{{ url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Выйти</a></li>
-				 </ul>
-				</div>
-			</div>
-			<nav>
-				<ul>
-					<li><a href="{{ url_for('index')}}"><span class="glyphicon glyphicon-home"></span> Главная</a></li>
-					<li><a href="{{ url_for('catalog')}}"><span class="glyphicon glyphicon-list-alt"></span> Справочник</a></li>
-					<li><a href="{{ url_for('cashbox')}}"><span class="glyphicon glyphicon-usd"></span> Касса</a></li>
-					<li><a href="{{ url_for('logout')}}"><span class="glyphicon glyphicon-off"></span> Выйти</a></li>
-				</ul>
-			</nav>
-		</div> -->
         {% block body %}
 						{% block modal_window %} {% endblock %}
         {% endblock %}
