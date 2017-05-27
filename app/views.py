@@ -7,6 +7,7 @@ from app import api
 from flask_restful import Resource
 from flask_restful import reqparse
 from sqlalchemy import extract, func
+from passlib.apps import custom_app_context as pwd_context
 
 # сессионные переменные  в куках будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
@@ -17,6 +18,38 @@ parser.add_argument('category_name')
 
 parser.add_argument('product_name')
 parser.add_argument('product_price')
+
+
+@app.route('/')
+def index():
+    return render_template('charts.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST" :
+        if request.form.get('login') and request.form.get('password'):
+            user = User.query.filter_by(login = request.form.get('login')).first()
+            if user and (pwd_context.verify(request.form.get('password'), user.password)):
+                session['user'] = user.id
+                return redirect('/')
+    return render_template('login.html')
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    del(session['user'])
+    return redirect('/login')
+
+# страиница каталога, получаем список категорий и выводим их
+@app.route('/catalog')
+def catalog():
+    # получаем названия категорий из базы
+    groups = Category.query.all()
+    return render_template('catalog.html', groups = groups)
+
+# общая страница с кассой
+@app.route('/cashbox', methods=["GET", "POST"])
+def cashbox():
+    return render_template('cashbox.html')
 
 #все категории
 class Categories(Resource):
@@ -51,8 +84,6 @@ class CategoryAction(Resource):
         db.session.delete(category)
         db.session.commit()
         return 204
-
-
 
 # получаем товары из группы и добавляем товар в группу
 class Products(Resource):
@@ -216,22 +247,27 @@ class StatisticYear(Resource):
                 continue
         return month
 
+#получаем отфильтрованные данные по месяцу и году
 class StatisticMonth(Resource):
     def get(self, year, month):
         # получаем список всех чеков за определенный месяц
         receipts = Receipt.query.filter(extract('year', Receipt.time) == year,extract('month', Receipt.time) == month).all()
         days = {}
+        # перебираем чеки
         for receipt in receipts:
+
             if receipt.cash != None:
+                # если ключа с днем месяца нет то мы устанавливаем его и задаем значение
                 if not (receipt.time.day in days):
                     days[receipt.time.day] = receipt.cash
+                    # если значение уже существует то прибавляем к ниму
                 else:
-                    # return  receipt.cash
                     days[receipt.time.day] += receipt.cash
             else:
                 continue
         return days
 
+# получаем товары и количеством их продаж
 class StatisticProduct(Resource):
     def get(self):
         products = db.session.query(Sale.product_id, Product, db.func.sum(Sale.quantity)).group_by(Sale.product_id).join(Product).all()
@@ -253,32 +289,3 @@ api.add_resource(CashboxStatus, '/cashbox/status')
 api.add_resource(StatisticYear, '/statistic/year/<int:year>')
 api.add_resource(StatisticMonth, '/statistic/year/<int:year>/month/<int:month>')
 api.add_resource(StatisticProduct, '/statistic/products')
-
-@app.route('/')
-def index():
-    return render_template('charts.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == "POST" :
-        return redirect('/')
-    return render_template('login.html')
-    # if request.form.get('email'):
-    #     return request.form.get('email')
-    # return render_template('login.html', title = "Авторизация")
-
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    return redirect('/login')
-
-# страиница каталога, получаем список категорий и выводим их
-@app.route('/catalog')
-def catalog():
-    # получаем названия категорий из базы
-    groups = Category.query.all()
-    return render_template('catalog.html', groups = groups)
-
-# общая страница с кассой
-@app.route('/cashbox', methods=["GET", "POST"])
-def cashbox():
-    return render_template('cashbox.html')

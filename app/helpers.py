@@ -14,3 +14,8 @@ def prepare_product(id_category):
     for product in products:
         jprod.append({'id' : product.id, 'name' : product.name, 'price' : product.price})
     return ({'products' :jprod})
+
+# проверка есть ли в сессии пользователь
+def user_auth():
+    if not ('user' in session):
+        return redirect('/login')
