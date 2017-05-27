@@ -1,12 +1,12 @@
 .login-content{
   margin: 0 auto;
   width: 350px;
-  height: 200px;
+  height: 350px;
   text-align: right;
   position:absolute;
   left:50%;
   top:50%;
-  margin:-100px 0 0 -175px;
+  margin:-175px 0 0 -175px;
 }
 h4 {
   text-align: center;
@@ -17,7 +17,7 @@ h4 {
   margin: 0 auto;
   margin-top: 10px;
   padding: 15px;
-  border-radius: 3px;
+  border-radius: 5px;
   box-shadow:  0 0 10px rgba(0,0,0,0.5);
   background-color: white;
 }

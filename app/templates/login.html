@@ -1,4 +1,4 @@
-<!doctype html>
+i<!doctype html>
 <html lang="ru">
 <head>
 	<meta charset="UTF-8">
@@ -11,7 +11,8 @@
   <script src="{{ url_for('static', filename = 'js/bootstrap/bootstrap.min.js') }}"></script>
 </head>
 <body>
-  <div class="login-content animated pulse">
+  <div class="login-content animated slideInDown">
+		<img id="logo" class="animated slideInDown" src="{{url_for('static', filename = 'img/logo.svg')}}" alt="JustManage">
     <form role="form" class="login" action="{{ url_for('login')}}" method="POST" name="login">
         <h4>Авторизация</h4>
         <div class="form-group has-feedback has-feedback-left">
@@ -22,7 +23,7 @@
             <input type="password" name="password" class="form-control" placeholder="Пароль">
             <i class="form-control-feedback glyphicon glyphicon-lock "></i>
         </div>
-        <input type="button" value="Войти">
+        <input type="submit" value="Войти">
     </form>
   </div>
 </body>

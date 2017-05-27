@@ -256,13 +256,20 @@ api.add_resource(StatisticProduct, '/statistic/products')
 
 @app.route('/')
 def index():
-    return render_template('main.html')
+    return render_template('charts.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.form.get('email'):
-        return request.form.get('email')
-    return render_template('login.html', title = "Авторизация")
+    if request.method == "POST" :
+        return redirect('/')
+    return render_template('login.html')
+    # if request.form.get('email'):
+    #     return request.form.get('email')
+    # return render_template('login.html', title = "Авторизация")
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    return redirect('/login')
 
 # страиница каталога, получаем список категорий и выводим их
 @app.route('/catalog')
@@ -275,7 +282,3 @@ def catalog():
 @app.route('/cashbox', methods=["GET", "POST"])
 def cashbox():
     return render_template('cashbox.html')
-
-@app.route('/charts')
-def charts():
-    return render_template('charts.html')
