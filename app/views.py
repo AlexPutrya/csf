@@ -64,7 +64,7 @@ class Categories(Resource):
         db.session.add(cat)
         db.session.commit()
         jcat = prepare_category()
-        return jcat
+        return jcat, 201
 
 # Отдельная категория
 class CategoryAction(Resource):
@@ -75,14 +75,14 @@ class CategoryAction(Resource):
         cat = Category.query.filter_by(id=id_category).one()
         cat.name = cat_name
         db.session.commit()
-        return 201
+        return '', 204
 
     # удаляем категорию
     def delete(self, id_category):
         category = Category.query.filter_by(id=id_category).one()
         db.session.delete(category)
         db.session.commit()
-        return 204
+        return '', 204
 
 # получаем товары из группы и добавляем товар в группу
 class Products(Resource):
@@ -100,7 +100,7 @@ class Products(Resource):
         db.session.commit()
         # получаем обновленный список товаров этой категории и формируем для отправки json
         jprod = prepare_product(id_category)
-        return jprod
+        return jprod, 201
 
 # Изменяем и удаляем товар
 class ProductAction(Resource):
@@ -111,7 +111,7 @@ class ProductAction(Resource):
         product.name = args['product_name']
         product.price = args['product_price']
         db.session.commit()
-        return '', 201
+        return '', 204
 
     # удаляем товар
     def delete(self, id_product):
@@ -152,7 +152,7 @@ class Receipts(Resource):
         #проверяем не пытается ли пользователь пробить пустой чек
         count_sales = Sale.query.filter_by(receipt_id=session['id_receipt']).count()
         if count_sales == 0:
-            return 404
+            return '', 404
         sales = Sale.query.filter_by(receipt_id=session['id_receipt'])
         # определяем сумму чека
         for sale in sales:
@@ -167,10 +167,10 @@ class Receipts(Resource):
         db.session.add(new_receipt)
         db.session.commit()
         session['id_receipt'] = new_receipt.id
-        return 204
+        return '', 204
 
 class ReceiptAction(Resource):
-    # добавить товар
+    # добавить товар в чек
     def post(self, id_receipt, id_product, quantity):
         receipt = Receipt.query.filter_by(id=id_receipt).one()
         product = Product.query.filter_by(id=id_product).one()
@@ -185,7 +185,7 @@ class ReceiptAction(Resource):
             receipt.sale.append(new_sale)
             db.session.add(receipt)
         db.session.commit()
-        return 204
+        return '', 204
 
     # изменить количество в чеке
     def put(self, id_receipt, id_product, quantity):
@@ -193,7 +193,7 @@ class ReceiptAction(Resource):
             sale = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
             sale.quantity = quantity
             db.session.commit()
-        return 204
+        return '', 204
 
 # удаление товара из чека
 class RecProdDel(Resource):
@@ -202,6 +202,7 @@ class RecProdDel(Resource):
         sale = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
         db.session.delete(sale)
         db.session.commit()
+        return '', 204
 
 #манипуляции с кассовой сменой открытие и закрытие
 class CashboxStatus(Resource):
@@ -214,7 +215,7 @@ class CashboxStatus(Resource):
         db.session.commit()
         session['id_cashbox'] = cashbox.id
         session['id_receipt'] = receipt.id
-        return 204
+        return '', 204
 
     # закрыть кассовую смену, если в это время есть открытый кассовый чек то мы его удаляем
     def put(self):
@@ -229,7 +230,7 @@ class CashboxStatus(Resource):
                 db.session.delete(sale)
         db.session.commit()
         del session['id_cashbox'], session['id_receipt']
-        return 204
+        return '', 204
 
 # Получаем статистику за год суммы по месяцам
 class StatisticYear(Resource):
