@@ -2,7 +2,20 @@ $(document).ready(function(){
   var date = new Date();
   var year = date.getFullYear();
   var month = date.getMonth()+1;
-
+  var backgroundColor = [
+    'rgba(255,102,51,1)',
+    'rgba(255,102,153,1)',
+    'rgba(204,153,255,1)',
+    'rgba(153,153,204,1)',
+    'rgba(102,153,255,1)',
+    'rgba(153,255,204,1)',
+    'rgba(102,255,153,1)',
+    'rgba(204,255,204,1)',
+    'rgba(153,204,204,1)',
+    'rgba(153,102,204,1)',
+    'rgba(255,153,0,1)',
+    'rgba(255,153,102,1)',
+  ];
   //выводим статитстику за предидущий год и за текущий месяц
   statistic_month(year, month);
   statistic_year(year-1);
@@ -66,22 +79,8 @@ $(document).ready(function(){
                 datasets: [{
                     label: 'Сумма, грн.',
                     data: price,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
+                    backgroundColor: backgroundColor,
+                    
                     borderWidth: 1
                 }]
             }
@@ -128,11 +127,7 @@ $(document).ready(function(){
           data:{
             datasets: [{
                 data: data['data'],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)'
-                ]
+                backgroundColor: backgroundColor
             }],
 
             // These labels appear in the legend and in the tooltips when hovering different arcs
