@@ -80,7 +80,7 @@ $(document).ready(function(){
 					// получаем название, цену, и id категории к которой будет отнесен товар
 					var product_name = $("#product-name").val();
 					var product_price = $("#product-price").val();
-					var active_category = $(".active").attr('id').split('-');
+					var active_category = $(".list-group-item.active").attr('id').split('-');
 					if(product_name == '' || product_price == ''){
 						return false;
 					}else{

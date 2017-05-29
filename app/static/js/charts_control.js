@@ -11,6 +11,7 @@ $(document).ready(function(){
 
   // инициализация графика по месяцам
   var month = document.getElementById("monthChart");
+  month.height = 130;
   var monthChart = new Chart(month, {
       type: 'line',
       data: {
@@ -57,6 +58,7 @@ $(document).ready(function(){
         $("#title_year").text("Статистика за "+year+" год");
 
         var chart = document.getElementById("yearChart");
+        chart.height = 70;
         var yearChart = new Chart(chart, {
             type: 'bar',
             data: {
@@ -120,6 +122,7 @@ $(document).ready(function(){
       type: "GET",
       success: function(data){
         var product = document.getElementById("productChart");
+        product.height = 275;
         var productChart = new Chart(product, {
           type: 'doughnut',
           data:{

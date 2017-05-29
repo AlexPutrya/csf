@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  // проверяем чтоб были не пустыми поля перд отправкой
+  // проверяем чтоб были не пустыми поля перед отправкой
   $("#submit").click(function(e){
     var name = $("input[name='login']").val();
     var password = $("input[name='password']").val();

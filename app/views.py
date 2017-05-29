@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify, session
 from app import app, db
 from app.models import User, Category, Product, Cashbox, Receipt, Sale
-from .helpers import prepare_category, prepare_product
+from .helpers import prepare_category, prepare_product, user_auth
 from datetime import datetime
 from app import api
 from flask_restful import Resource
@@ -15,10 +15,8 @@ app.before_request(lambda: setattr(session, 'permanent', True))
 # парсинг аргументов запроса
 parser = reqparse.RequestParser()
 parser.add_argument('category_name')
-
 parser.add_argument('product_name')
 parser.add_argument('product_price')
-
 
 @app.route('/')
 def index():
@@ -36,7 +34,8 @@ def login():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    del(session['user'])
+    if 'user' in session:
+        del(session['user'])
     return redirect('/login')
 
 # страиница каталога, получаем список категорий и выводим их
@@ -112,14 +111,14 @@ class ProductAction(Resource):
         product.name = args['product_name']
         product.price = args['product_price']
         db.session.commit()
-        return 201
+        return '', 201
 
     # удаляем товар
     def delete(self, id_product):
         product = Product.query.filter_by(id=id_product).one()
         db.session.delete(product)
         db.session.commit()
-        return 204
+        return '', 204
 
 # Работа с чеком получаем данные, и пробиваем чек
 class Receipts(Resource):
