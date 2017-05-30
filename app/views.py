@@ -1,4 +1,5 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify, session
+import calendar
 from datetime import datetime
 from flask_restful import Resource
 from flask_restful import reqparse
@@ -270,9 +271,22 @@ class StatisticYear(Resource):
 class StatisticMonth(Resource):
     @login_required
     def get(self, year, month):
+        # асоциативный масси для данных
+        days = {}
+        now = datetime.now()
+        count_days = 0
+        # инициализируем массив с нулями
+        if (year == now.year and month == now.month):
+            count_days = now.day
+        else:
+            # второй параметр массива будет равен количеству дней этого года и месяца
+            count_days = calendar.monthrange(year, month)[1]
+        # если запрашиваем месяц позже текущего
+        if not (year >= now.year and month > now.month):
+            for i in range(1, count_days+1):
+                days[i] =0
         # получаем список всех чеков за определенный месяц
         receipts = Receipt.query.filter(extract('year', Receipt.time) == year,extract('month', Receipt.time) == month).all()
-        days = {}
         # перебираем чеки
         for receipt in receipts:
 
