@@ -1,3 +1,7 @@
+from flask import url_for, redirect, session
+from functools import wraps
+import urllib.request
+
 from app.models import Category, Product
 
 # подготовка списка для преобразования в json
@@ -16,6 +20,13 @@ def prepare_product(id_category):
     return ({'products' :jprod})
 
 # проверка есть ли в сессии пользователь
-def user_auth():
-    if not ('user' in session):
-        return redirect('/login')
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('user') is None:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+    #
+    # if not ('user' in session):
+    #     return redirect('/login')

@@ -1,13 +1,13 @@
 from flask import render_template, url_for, redirect, flash, request, jsonify, session
-from app import app, db
-from app.models import User, Category, Product, Cashbox, Receipt, Sale
-from .helpers import prepare_category, prepare_product, user_auth
 from datetime import datetime
-from app import api
 from flask_restful import Resource
 from flask_restful import reqparse
 from sqlalchemy import extract, func
 from passlib.apps import custom_app_context as pwd_context
+
+from app import app, db, api
+from app.models import User, Category, Product, Cashbox, Receipt, Sale
+from .helpers import prepare_category, prepare_product, login_required
 
 # сессионные переменные  в куках будут жить после закрытия браузера
 app.before_request(lambda: setattr(session, 'permanent', True))
@@ -19,6 +19,7 @@ parser.add_argument('product_name')
 parser.add_argument('product_price')
 
 @app.route('/')
+@login_required
 def index():
     return render_template('charts.html')
 
@@ -40,6 +41,7 @@ def logout():
 
 # страиница каталога, получаем список категорий и выводим их
 @app.route('/catalog')
+@login_required
 def catalog():
     # получаем названия категорий из базы
     groups = Category.query.all()
@@ -47,17 +49,20 @@ def catalog():
 
 # общая страница с кассой
 @app.route('/cashbox', methods=["GET", "POST"])
+@login_required
 def cashbox():
     return render_template('cashbox.html')
 
 #все категории
 class Categories(Resource):
     # получаем список категорий
+    @login_required
     def get(self):
         jcat = prepare_category()
         return jcat
 
     # добавляем категорию и возвращаем новые данные
+    @login_required
     def post(self):
         args = parser.parse_args()
         cat = Category(args['category_name'])
@@ -69,6 +74,7 @@ class Categories(Resource):
 # Отдельная категория
 class CategoryAction(Resource):
     # редактируем категорию
+    @login_required
     def put(self, id_category):
         args = parser.parse_args()
         cat_name = args['category_name']
@@ -78,6 +84,7 @@ class CategoryAction(Resource):
         return '', 204
 
     # удаляем категорию
+    @login_required
     def delete(self, id_category):
         category = Category.query.filter_by(id=id_category).one()
         db.session.delete(category)
@@ -87,11 +94,13 @@ class CategoryAction(Resource):
 # получаем товары из группы и добавляем товар в группу
 class Products(Resource):
     #загружаем список товаров
+    @login_required
     def get(self, id_category):
         jprod = prepare_product(id_category)
         return jprod
 
     # добавляем товар в категорию
+    @login_required
     def post(self, id_category):
         args = parser.parse_args()
         # создаем новый товар и добавляем в бд
@@ -105,6 +114,7 @@ class Products(Resource):
 # Изменяем и удаляем товар
 class ProductAction(Resource):
     # изменить товар
+    @login_required
     def put(self, id_product):
         args = parser.parse_args()
         product = Product.query.filter_by(id=id_product).one()
@@ -114,6 +124,7 @@ class ProductAction(Resource):
         return '', 204
 
     # удаляем товар
+    @login_required
     def delete(self, id_product):
         product = Product.query.filter_by(id=id_product).one()
         db.session.delete(product)
@@ -123,6 +134,7 @@ class ProductAction(Resource):
 # Работа с чеком получаем данные, и пробиваем чек
 class Receipts(Resource):
     # получить и сформировать чек кассовой смены
+    @login_required
     def get(self):
         products=[]
         number =0
@@ -146,6 +158,7 @@ class Receipts(Resource):
         return {'cashbox_status': 0}
 
     # Пробиваем чек
+    @login_required
     def put(self):
         receipt_summ = 0
 
@@ -171,6 +184,7 @@ class Receipts(Resource):
 
 class ReceiptAction(Resource):
     # добавить товар в чек
+    @login_required
     def post(self, id_receipt, id_product, quantity):
         receipt = Receipt.query.filter_by(id=id_receipt).one()
         product = Product.query.filter_by(id=id_product).one()
@@ -188,6 +202,7 @@ class ReceiptAction(Resource):
         return '', 204
 
     # изменить количество в чеке
+    @login_required
     def put(self, id_receipt, id_product, quantity):
         if quantity > 0:
             sale = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
@@ -198,6 +213,7 @@ class ReceiptAction(Resource):
 # удаление товара из чека
 class RecProdDel(Resource):
     # удалить товар из чека
+    @login_required
     def delete(self, id_receipt, id_product):
         sale = Sale.query.filter_by(product_id=id_product, receipt_id=id_receipt).first()
         db.session.delete(sale)
@@ -207,6 +223,7 @@ class RecProdDel(Resource):
 #манипуляции с кассовой сменой открытие и закрытие
 class CashboxStatus(Resource):
     # открыть кассовую смену
+    @login_required
     def post(self):
         cashbox = Cashbox(datetime.utcnow())
         receipt = Receipt(time=datetime.utcnow())
@@ -218,6 +235,7 @@ class CashboxStatus(Resource):
         return '', 204
 
     # закрыть кассовую смену, если в это время есть открытый кассовый чек то мы его удаляем
+    @login_required
     def put(self):
         cashbox = Cashbox.query.filter_by(id=session['id_cashbox']).one()
         cashbox.status = 0
@@ -234,6 +252,7 @@ class CashboxStatus(Resource):
 
 # Получаем статистику за год суммы по месяцам
 class StatisticYear(Resource):
+    @login_required
     def get(self, year):
         month = {}
         cashboxes = Cashbox.query.all()
@@ -249,6 +268,7 @@ class StatisticYear(Resource):
 
 #получаем отфильтрованные данные по месяцу и году
 class StatisticMonth(Resource):
+    @login_required
     def get(self, year, month):
         # получаем список всех чеков за определенный месяц
         receipts = Receipt.query.filter(extract('year', Receipt.time) == year,extract('month', Receipt.time) == month).all()
@@ -269,6 +289,7 @@ class StatisticMonth(Resource):
 
 # получаем товары и количеством их продаж
 class StatisticProduct(Resource):
+    @login_required
     def get(self):
         products = db.session.query(Sale.product_id, Product, db.func.sum(Sale.quantity)).group_by(Sale.product_id).join(Product).all()
         labels = []
