@@ -80,7 +80,7 @@ $(document).ready(function(){
                     label: 'Сумма, грн.',
                     data: price,
                     backgroundColor: backgroundColor,
-                    
+
                     borderWidth: 1
                 }]
             }
