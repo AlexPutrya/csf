@@ -72,7 +72,7 @@ $(document).ready(function(){
 								<button type="submit" class="btn btn-default" id="modal-create">Создать</button>\
 								<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
 							</div>';
-				show_modal(modal_data);
+				show_modal(modal_data, 300, 250);
 					// после клика  на "создать" проверяем введенные данные
 				$('#modal-create').click(function(e){
 					e.preventDefault();
@@ -146,7 +146,7 @@ $(document).ready(function(){
 							<button type="submit" class="btn btn-default" id="modal-edit">Редактировать</button>\
 							<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
 						</div>';
-  			show_modal(modal_data);
+  			show_modal(modal_data, 300, 250 );
   			$("#modal-edit").click(function(e){
   				e.preventDefault();
   				e.stopPropagation();
@@ -218,27 +218,14 @@ $(document).ready(function(){
 
 		}
 	});
+
 	// Закрытие модального окна и возвращение к обычному варианту
 	$("body").on('click', '#modal-close', function(e){
-		e.preventDefault();
-		e.stopPropagation();
-		close_modal();
+	  e.preventDefault();
+	  e.stopPropagation();
+	  close_modal();
 	});
-	// Спрятать модальное окно и удалить все динамически добавленные елементы
-	function close_modal(){
-		$('#modal').css('display','none');
-		$('#modal form').remove();
-		$('#modal').append(
-			'<form></form>'
-		);
-	}
-	// Cоздать окно с контентом который будет добавлен в начало
-	function show_modal(modal_data){
-		$('#modal')
-		.css('display','block')
-		.animate({opacity: 1, top: '50%'}, 200);
-		$('#modal form').prepend(modal_data);
-	}
+
 	// Обновление колонки с товарами, из json данные должны прийти под ключем "products"
 	function refresh_product(data){
 		//удаляем все продукты из колонки

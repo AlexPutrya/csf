@@ -42,8 +42,8 @@ h3 {
 
 /*Modal Window*/
 #modal {
-	width: 300px;
-	height: 250px; /* Рaзмеры дoлжны быть фиксирoвaны */
+	/*width: 300px;
+	height: 250px; /* Рaзмеры дoлжны быть фиксирoвaны */*/
 	border-radius: 5px;
 	border: 1px #000 solid;
 	background: #fff;
