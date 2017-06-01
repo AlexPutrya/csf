@@ -36,7 +36,7 @@ def main():
     # стартуем с этой даты
     now_date = date(2016, 1, 1)
     # крутим цикл по количеству дней
-    while(now_date < date(2017, 5, 23)):
+    while(now_date < date(2017, 6, 1)):
         # получаем дату текущего дня, datetime закрытия и открытия
         now_date += timedelta(days=1)
         now_end = datetime.combine(now_date, close_time)

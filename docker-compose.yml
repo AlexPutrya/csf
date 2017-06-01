@@ -1,6 +1,6 @@
 manager:
     image: alexputrya/manager:latest
-    command:  /usr/local/bin/gunicorn -w 2 -b :5000 app:app
+    command:  python run.py
     ports:
       - '5000:5000'
     volumes:
