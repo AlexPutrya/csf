@@ -7,4 +7,4 @@ WORKDIR /project
 # номер порта который должен выдать контейнер
 EXPOSE 5000
 #команда для запуска
-CMD ["python", "./run.py"]
+CMD ["/usr/local/bin/gunicorn" , "app:app"]
