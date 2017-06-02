@@ -60,7 +60,7 @@ $(document).ready(function(){
 			// Создание товара
 			}else if(clickedId[1] == 'product'){
 				// выводим модальное окно и добавляем два инпута имя и цену
-				modal_data ='<div class="form-group">\
+				var modal_data ='<div class="form-group">\
 	    						<label>Название товара</label>\
 	    						<input type="text" class="form-control" id="product-name">\
 	  						</div>\
@@ -68,11 +68,11 @@ $(document).ready(function(){
 	    						<label>Цена, грн.</label>\
 	    						<input type="text" class="form-control" id="product-price">\
 	  						</div>\
-	  						<div class="form-group">\
+	  						<div class="form-group control">\
 								<button type="submit" class="btn btn-default" id="modal-create">Создать</button>\
 								<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
 							</div>';
-				show_modal(modal_data, 300, 250);
+				show_modal(modal_data, 300, 230);
 					// после клика  на "создать" проверяем введенные данные
 				$('#modal-create').click(function(e){
 					e.preventDefault();
@@ -103,6 +103,7 @@ $(document).ready(function(){
 			}
 		}
 	});
+
 	// Редактирование группы
 	$("body").on('click', '.edit', function(e){
 		e.preventDefault();
@@ -111,46 +112,66 @@ $(document).ready(function(){
 		// редактируем группу
 		if(clickedId[1] == "group"){
 			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split('\n');
-			var replace_text = prompt("Измените название", text_parts[0].trim()).trim();
-			var id_category = clickedId[2]
-			if(replace_text != "" && replace_text != null){
-				parametr = {
-					category_name: replace_text
+			// alert($('#' + clickedId[1] +'-' +clickedId[2]+" .group-name").text());
+			var category_name = $('#' + clickedId[1] +'-' +clickedId[2]+" .group-name").text();
+			var id_category = clickedId[2];
+			var modal_data =
+							'<div class="form-group">\
+								<label>Название группы</label>\
+								<input type="text" class="form-control" id="group-name" value="'+category_name+'">\
+							</div>\
+							<div class="form-group control">\
+							<button type="submit" class="btn btn-default" id="modal-edit-group">Изменить</button>\
+							<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
+						</div>';
+			show_modal(modal_data, 300, 150);
+			// при нажатии на редактирование группы
+			$("#modal-edit-group").click(function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var replace_text = $('#group-name').val();
+				if(replace_text != "" && replace_text != null){
+					parametr = {
+						category_name: replace_text
+					}
+					$.ajax({
+	                    url: '/categories/'+id_category,
+	                    type: 'PUT',
+	                    data: parametr,
+	                    success: function(data){
+													close_modal();
+	                        $('#'+ clickedId[1] + '-' + clickedId[2]).html('<span class="group-name">'+replace_text +
+	                        '</span><div class="btn-group pull-right">\
+	                        <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button>\
+	                        <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button>\
+	                        </div>'
+	                        );
+	                    }
+					});
 				}
-				$.ajax({
-                    url: '/categories/'+id_category,
-                    type: 'PUT',
-                    data: parametr,
-                    success: function(data){
-                        $('#'+ clickedId[1] + '-' + clickedId[2]).html(replace_text +
-                        '<div class="btn-group pull-right">\
-                        <button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button>\
-                        <button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button>\
-                        </div>'
-                        );
-                    }
-				});
-			}
+			})
         //редактируем товар
 		}else if(clickedId[1] == "product"){
 			var text_parts = $('#' + clickedId[1] +'-' +clickedId[2]).text().split(' ');
-			modal_data ='<div class="form-group">\
+			var get_product_name = $('#' + clickedId[1] +'-' +clickedId[2]+' .product-name').text();
+			var get_product_price = $('#' + clickedId[1] +'-' +clickedId[2]+' .product-price').text();
+			var modal_data ='<div class="form-group">\
     						<label>Название товара</label>\
-    						<input type="text" class="form-control" id="product-name" value="'+text_parts[0]+'">\
+    						<input type="text" class="form-control" id="product-name" value="'+get_product_name+'">\
   						</div>\
   						<div class="form-group">\
     						<label>Цена, грн.</label>\
-    						<input type="text" class="form-control" id="product-price" value="'+text_parts[2]+'">\
+    						<input type="text" class="form-control" id="product-price" value="'+get_product_price+'">\
   						</div>\
-  						<div class="form-group">\
+  						<div class="form-group control">\
 							<button type="submit" class="btn btn-default" id="modal-edit">Редактировать</button>\
 							<button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
 						</div>';
-  			show_modal(modal_data, 300, 250 );
+  			show_modal(modal_data, 300, 230 );
   			$("#modal-edit").click(function(e){
   				e.preventDefault();
   				e.stopPropagation();
-  				var product_name = $("#product-name").val();
+  			var product_name = $("#product-name").val();
 				var product_price = $("#product-price").val();
 				var id_product = clickedId[2];
 				if(product_name == '' || product_price == ''){
@@ -167,7 +188,7 @@ $(document).ready(function(){
 					    data: parametr,
 					    success: function(data){
 					        close_modal();
-					        $('#'+ clickedId[1] + '-' + clickedId[2]).html(product_name +'<span class=" price"> | ' + product_price + ' грн</span>\
+					        $('#'+ clickedId[1] + '-' + clickedId[2]).html('<span class="product-name">'+product_name +'</span> | <span class="product-price">' + product_price + '</span> грн\
 								<div class="btn-group pull-right">\
 								<button type="button"  id="edit-'+ clickedId[1] + '-' + clickedId[2] +'" class="btn-xs btn-info edit">Редактировать</button>\
 								<button type="button" id="delete-' + clickedId[1] + '-' + clickedId[2]+'" class="btn-xs btn-danger delete">Удалить</button>\
@@ -233,7 +254,7 @@ $(document).ready(function(){
 		// перебираем элементы товаров и добавляем на страницу
 		$.each(data.products, function(key, value) {
 			$("#product .list-group").append(
-				'<a href="#" class="list-group-item" id="product-'+value.id+'">'+value.name+'<span class=" price"> | '+value.price+' грн</span>\
+				'<a href="#" class="list-group-item" id="product-'+value.id+'"><span class="product-name">'+value.name+'</span> | <span class="product-price">'+value.price+'</span> грн\
 				<div class="btn-group pull-right">\
 					<button type="button"  id="edit-product-'+value.id+'" class="btn-xs btn-info edit">Редактировать</button> \
 					<button type="button" id="delete-product-'+value.id+'" class="btn-xs btn-danger delete">Удалить</button>\

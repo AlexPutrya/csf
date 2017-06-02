@@ -12,7 +12,7 @@
 					<a href="#" class="btn btn-block btn-success" id="create-group">Создать <span class="glyphicon glyphicon-plus"></span></a>
 					<div class="list-group">
 						{% for group in groups %}
-						<a href="#" class="list-group-item" id="group-{{group.id}}">{{group.name}}
+						<a href="#" class="list-group-item" id="group-{{group.id}}"><span class='group-name'>{{group.name}}</span>
 							<div class="btn-group pull-right">
 								<button type="button"  id="edit-group-{{group.id}}" class="btn-xs btn-info edit">Редактировать</button>
 								<button type="button" id="delete-group-{{group.id}}" class="btn-xs btn-danger delete">Удалить</button>

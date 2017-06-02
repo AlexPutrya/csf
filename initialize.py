@@ -69,13 +69,14 @@ def main():
                 # получаем товар
                 new_product = Product.query.filter_by(id=product_id).first()
                 # добавляем в продажи
-                new_sale = Sale(quantity = 1, price = new_product.price)
+                rand_quantity = random.randint(1, 3)
+                new_sale = Sale(quantity = rand_quantity, price = new_product.price)
                 new_sale.product = new_product
                 # добавляем продажу в чек
                 receipt.sale.append(new_sale)
                 # добавляем сумму в общую для кассы при учете что в чеке количество уникального товара = 1
-                cashbox_summ += new_product.price
-                receipt_summ += new_product.price
+                cashbox_summ += new_product.price*rand_quantity
+                receipt_summ += new_product.price*rand_quantity
 
             receipt.status = 0
             receipt.cash = receipt_summ

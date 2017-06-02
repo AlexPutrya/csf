@@ -10,8 +10,10 @@ function close_modal(){
 function show_modal(modal_data, m_width, m_height){
   $('#modal')
   .css({display:'block',
-        width: m_width+"px",
-        height: m_height+'px'})
+        'width': m_width+"px",
+        'height': m_height+'px',
+        'margin-top': '-'+m_height/2+'px',
+        'margin-left': '-'+m_width/2+'px'})
   .animate({opacity: 1, top: '50%'}, 200);
   $('#modal form').prepend(modal_data);
 }
