@@ -241,7 +241,7 @@ $(document).ready(function(){
 							<button type="submit" class="btn btn-default" id="modal-delete">Удалить</button>\
 							<button type="submit" class="btn btn-default" id="modal-close-delete">Закрыть</button>\
 						</div>';
-			show_modal(modal_data, 300, 100);
+			show_modal(modal_data, 300, 120);
 				// после клика  на "создать" проверяем введенные данные
 			$('#modal-delete').click(function(e){
 			// if(confirm("Вы точно хотите удалить элемент?")){
