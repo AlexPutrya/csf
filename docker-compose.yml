@@ -1,7 +1,19 @@
-manager:
-    image: alexputrya/manager:latest
-    command:  python run.py
-    ports:
-      - '5000:5000'
-    volumes:
-      - .:/project
+version: '2'
+services:
+    www:
+        build: manager/.
+        restart: always
+        ports:
+            - "5000:5000"
+        command: /usr/local/bin/gunicorn -b 0.0.0.0:5000 app:app
+        depends_on:
+            - database
+    database:
+        build: mysql/.
+        restart: always
+        volumes:
+            - mysql:/var/lib/mysql
+        environment:
+             MYSQL_ROOT_PASSWORD: supersecure
+volumes:
+    mysql:

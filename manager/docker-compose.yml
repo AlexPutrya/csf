@@ -1,0 +1,7 @@
+manager:
+    image: alexputrya/manager:latest
+    command:  python run.py
+    ports:
+      - '5000:5000'
+    volumes:
+      - .:/project
