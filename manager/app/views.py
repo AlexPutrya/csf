@@ -312,7 +312,8 @@ class StatisticProduct(Resource):
         labels = []
         data = []
         for product in products:
-                data.append(product[2])
+                # при расчете SQLAlchemy возвращает класс Decimal, потому переводим в int иначе получим code 500
+                data.append(int(product[2]))
                 labels.append(product[1].name)
         return {'labels':labels, 'data':data}
 

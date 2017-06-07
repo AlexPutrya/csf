@@ -6,7 +6,7 @@ USER = 'root'
 HOSTNAME = 'database'
 
 
-SQLALCHEMY_DATABASE_URI = 'mysql://%s:%s@%s/%s'%(USER, PASSWORD, HOSTNAME, DATABASE)
+SQLALCHEMY_DATABASE_URI = 'mysql://%s:%s@%s/%s?charset=utf8'%(USER, PASSWORD, HOSTNAME, DATABASE)
 
 # basedir = os.path.abspath(os.path.dirname(__file__))
 # SQLALCHEMY_DATABASE_URI = 'sqlite:///'+os.path.join(basedir, 'database.db')

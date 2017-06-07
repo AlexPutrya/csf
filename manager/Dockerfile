@@ -6,6 +6,6 @@ RUN pip install -r requirements.txt
 WORKDIR /project
 COPY . /project
 # номер порта который должен выдать контейнер
-EXPOSE 5000
+#EXPOSE 5000
 #команда для запуска
 #CMD ["python", "run.py"]

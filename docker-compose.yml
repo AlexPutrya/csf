@@ -9,7 +9,7 @@ services:
         depends_on:
             - database
     database:
-        build: mysql/.
+        image: mysql:latest
         restart: always
         volumes:
             - mysql:/var/lib/mysql
