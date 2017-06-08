@@ -34,16 +34,32 @@ $(document).ready(function(){
         //добавляем товар в чек
 		}else if(clickedId[0] == 'product'){
 		    var id_receipt = $("#receipt_number").text();
-		    var quantity = prompt("Количество", '>1');
-		    if (quantity >0){
-                $.ajax({
-                    url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
-                    type: "POST",
-                    success: function(){
-                        reload();
-                    }
-                });
-		    }
+            var modal_data =
+                '<div class="form-group">\
+                    <label>Количество</label>\
+                    <input type="text" class="form-control" id="quantity">\
+                </div>\
+                <div class="form-group control">\
+                    <button type="submit" class="btn btn-default" id="modal-add">Добавить</button>\
+                    <button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
+                </div>';
+            show_modal(modal_data, 300, 140);
+            $("#modal-add").on("click", function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                var quantity = $("#quantity").val();
+                if (quantity >0){
+                    $.ajax({
+                        url: '/receipt/'+id_receipt+'/product/'+clickedId[1]+'/quantity/'+quantity,
+                        type: "POST",
+                        success: function(){
+                            close_modal();
+                            reload();
+                        }
+                    });
+    		    }
+            });
+
 		}
 	});
 
@@ -52,17 +68,33 @@ $(document).ready(function(){
 	    e.preventDefault();
 	    e.stopPropagation();
 	    var clickedId = this.id;
-	    var quantity = prompt("Количество", '>1');
-	    var id_receipt = $("#receipt_number").text();
-	    if (quantity > 0){
-            $.ajax({
-                url: '/receipt/'+id_receipt+'/product/'+clickedId+'/quantity/'+quantity,
-                type: "PUT",
-                success: function(){
-                    reload();
-                }
-            });
-        }
+        var id_receipt = $("#receipt_number").text();
+        var modal_data =
+            '<div class="form-group">\
+                <label>Количество</label>\
+                <input type="text" class="form-control" id="quantity">\
+            </div>\
+            <div class="form-group control">\
+                <button type="submit" class="btn btn-default" id="modal-change">Изменить</button>\
+                <button type="submit" class="btn btn-default" id="modal-close">Закрыть</button>\
+            </div>';
+        show_modal(modal_data, 300, 140);
+	    // var quantity = prompt("Количество", '>1');
+        $("#modal-change").on("click", function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var quantity = $("#quantity").val();
+            if (quantity > 0){
+                $.ajax({
+                    url: '/receipt/'+id_receipt+'/product/'+clickedId+'/quantity/'+quantity,
+                    type: "PUT",
+                    success: function(){
+                        close_modal();
+                        reload();
+                    }
+                });
+            }
+	    });
 	});
 
     //удаление товара из чека
@@ -209,4 +241,11 @@ $(document).ready(function(){
 	        }
 	    });
 	}
+
+    // Закрытие модального окна и возвращение к обычному варианту
+	$("body").on('click', '#modal-close', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		close_modal();
+	});
 });
